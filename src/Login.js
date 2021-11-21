@@ -1,9 +1,10 @@
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
 
     return (
-        <Container fluid>
+        <Container fluid style={{marginTop: '17%'}}>
             <Row>
                 <Col></Col>
                 <Col lg={6}>
@@ -32,7 +33,7 @@ const Login = () => {
                             </Form>
                         </div>
                     </div>
-                    <p className="mt-3 align-start">New User? &nbsp;<a href="">Sign up</a></p>
+                    <p className="mt-3 align-start">New User? &nbsp;<Link to="/register">Sign up</Link></p>
                 </Col>
                 <Col></Col>
             </Row>
