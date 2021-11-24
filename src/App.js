@@ -1,10 +1,12 @@
-import Header from "./components/Header";
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navigate } from 'react-router';
 
 function App() {
   return (
-    <>
-      <Header />
-    </>
+    <div className="App" fluid>
+      <Navigate to="/login" />
+    </div>
   );
 }
 
