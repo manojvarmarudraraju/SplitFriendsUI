@@ -1,11 +1,11 @@
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navigate } from 'react-router';
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Navigate } from "react-router";
 
 function App() {
   return (
     <div className="App" fluid>
-      <Navigate to="/login" />
+      <Navigate to="/Home" />
     </div>
   );
 }

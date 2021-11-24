@@ -1,0 +1,66 @@
+[
+  {
+    "_id": {
+      "$oid": "619c7898750e68ecd3d89e9f"
+    },
+    "name": "group1",
+    "admin": "619b8febb77400a34d2db054",
+    "members": []
+  },
+  {
+    "_id": {
+      "$oid": "619de6635158ef50563617aa"
+    },
+    "name": "group2",
+    "members": ["Abi", "Manoj", "Harsh"],
+    "admin": "619b8febb77400a34d2db054"
+  },
+  {
+    "_id": {
+      "$oid": "619c7898750e68ecd3d89e9f"
+    },
+    "name": "group1",
+    "admin": "619b8febb77400a34d2db054",
+    "members": ["hh", "sse", "rhrhr", "rbbw"]
+  },
+  {
+    "_id": {
+      "$oid": "619de6635158ef50563617aa"
+    },
+    "name": "group2",
+    "members": ["Abi", "Manoj", "Harsh"],
+    "admin": "619b8febb77400a34d2db054"
+  },
+  {
+    "_id": {
+      "$oid": "619c7898750e68ecd3d89e9f"
+    },
+    "name": "group1",
+    "admin": "619b8febb77400a34d2db054",
+    "members": ["H", "av"]
+  },
+  {
+    "_id": {
+      "$oid": "619de6635158ef50563617aa"
+    },
+    "name": "group2",
+    "members": ["Abi", "Manoj", "Harsh"],
+    "admin": "619b8febb77400a34d2db054"
+  },
+  {
+    "_id": {
+      "$oid": "619c7898750e68ecd3d89e9f"
+    },
+    "name": "group1",
+    "admin": "619b8febb77400a34d2db054",
+    "members": []
+  },
+  {
+    "_id": {
+      "$oid": "619de6635158ef50563617aa"
+    },
+    "name": "group2",
+    "members": ["Abi", "Manoj", "Harsh"],
+    "admin": "619b8febb77400a34d2db054"
+  }
+]
