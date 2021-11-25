@@ -1,7 +1,43 @@
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { useState} from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from 'react-router';
+import { login } from "../actions/auth";
 
-const Login = () => {
+const Login = (props) => {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const { isLoggedIn } = useSelector(state => state.auth);
+    const { message } = useSelector(state => state.message);
+
+    const dispatch = useDispatch();
+
+    if (isLoggedIn) {
+        return <Navigate to="/" />;
+    }
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if(email === "" || password === ""){
+            alert("Please fill in all the details!");
+        } else {
+            const obj = {}
+            obj['password'] = password;
+            obj['email'] = email;
+            dispatch(login(obj))
+                .then(() => {
+                    props.history.push("/");
+                    window.location.reload();
+                })
+                .catch(() => {
+                    setLoading(false);});
+        }
+    }
 
     return (
         <Container fluid style={{marginTop: '17%'}}>
@@ -11,25 +47,46 @@ const Login = () => {
                     <div className="login-container">
                         <div className='login-card'>
                             <h4 className="align-start mb-3">Log in to SplitFriends</h4>
-                            <Form className='login-form'>
-                                <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
+                            <Form className='login-form' onSubmit={handleLogin}>
+                                <Form.Group as={Row} className="mb-3" controlId="email">
                                     <Form.Label className="align-start" column sm={2}>Email</Form.Label>
                                     <Col sm={10}>
-                                        <Form.Control type="email" placeholder="Email" />
+                                        <Form.Control type="email" placeholder="Email" onChange={(event)=>{
+                                            setEmail(event.target.value);
+                                        }} />
                                     </Col>
                                 </Form.Group>
 
-                                <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
+                                <Form.Group as={Row} className="mb-3" controlId="password">
                                     <Form.Label className="align-start" column sm={2}>Password</Form.Label>
                                     <Col sm={10}>
-                                        <Form.Control type="password" placeholder="Password" />
+                                        <Form.Control type="password" placeholder="Password" onChange={(event)=>{
+                                            setPassword(event.target.value);
+                                        }} />
                                     </Col>
                                 </Form.Group>
                                 <Form.Group as={Row} className="mb-3">
                                     <Col className="align-start" sm={{ span: 10, offset: 2 }}>
-                                        <Button variant="dark" type="submit">Sign in</Button>
+                                        <Button variant="dark" type="submit">
+                                            {loading && (
+                                                <div>
+                                                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                                                    Loading...
+                                                </div>
+                                            )}
+                                            <span>Sign in</span>
+                                        </Button>
                                     </Col>
                                 </Form.Group>
+                                {message && (
+                                    <Form.Group as={Row} className="mb-3" controlId="successError">
+                                        <Col sm={12}>
+                                            <Alert variant={ "danger" }>
+                                                {message}
+                                            </Alert>
+                                        </Col>
+                                    </Form.Group>
+                                )}
                             </Form>
                         </div>
                     </div>
