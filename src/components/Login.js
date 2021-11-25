@@ -22,10 +22,10 @@ const Login = (props) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        setLoading(true);
         if(email === "" || password === ""){
             alert("Please fill in all the details!");
         } else {
+            setLoading(true);
             const obj = {}
             obj['password'] = password;
             obj['email'] = email;
@@ -69,11 +69,9 @@ const Login = (props) => {
                                     <Col className="align-start" sm={{ span: 10, offset: 2 }}>
                                         <Button variant="dark" type="submit">
                                             {loading && (
-                                                <div>
-                                                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                                    Loading...
-                                                </div>
+                                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
                                             )}
+                                            &nbsp;
                                             <span>Sign in</span>
                                         </Button>
                                     </Col>
