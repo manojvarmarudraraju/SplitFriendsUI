@@ -1,38 +1,74 @@
 import React from "react";
-import { Card, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { RiEyeFill } from "react-icons/ri";
-import { IoMdArchive } from "react-icons/io";
+import {
+  Card,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { FaEye } from "react-icons/fa";
 
 const GroupComponent = (props) => {
   const { data } = props;
+  var debt_str = "";
+  Object.keys(data.debts).forEach((val) => {
+    debt_str += val.toString() + ":" + data.debts[val].toString() + ", ";
+  });
+  debt_str = debt_str.slice(0, -2);
+
   return (
     <Card
-      style={{ width: "15rem", backgroundColor: "#D9DDDC" }}
-      className="m-2 shadow  rounded"
+      style={{ width: "auto", backgroundColor: "#E1E1E1" }}
+      className="mh-50 m-3 border border-light shadow-lg rounded"
     >
+      <Card.Header as="h5" className="text-uppercase">
+        <Container>
+          <Row>
+            <Col className="d-flex align-items-center">{data.name}</Col>
+            <Col className="d-flex justify-content-end">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip id="button-tooltip-2">View</Tooltip>}
+              >
+                <Button
+                  variant="primary"
+                  className="rounded-pill border border-1 "
+                >
+                  <FaEye fontSize="1.4em" />
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip id="button-tooltip-2">Archive</Tooltip>}
+              >
+                <Button
+                  variant="danger"
+                  className="rounded-pill border border-1"
+                >
+                  <RiDeleteBin5Fill fontSize="1.4em" />
+                </Button>
+              </OverlayTrigger>
+            </Col>
+          </Row>
+        </Container>
+      </Card.Header>
       <Card.Body>
-        <Card.Title className="text-center text-uppercase fs-3 fw-bold">
-          {data.name}
-        </Card.Title>
-        <Card.Text className="text-center fs-4 text-dark">
-          Members: {data.members.length}{" "}
-        </Card.Text>
-        <OverlayTrigger
-          placement="bottom"
-          overlay={<Tooltip id="button-tooltip-2">View</Tooltip>}
-        >
-          <Button variant="primary" className="rounded-circle border border-1 ">
-            <RiEyeFill fontSize="1.6em" />
-          </Button>
-        </OverlayTrigger>
-        <OverlayTrigger
-          placement="bottom"
-          overlay={<Tooltip id="button-tooltip-2">Archive</Tooltip>}
-        >
-          <Button variant="success" className="rounded-circle border border-1">
-            <IoMdArchive fontSize="1.6em" />
-          </Button>
-        </OverlayTrigger>
+        <div>
+          {Object.keys(data.debts).length === 0 ? (
+            <>
+              <Card.Title> Debts: </Card.Title>
+              <Card.Text>You are clean</Card.Text>
+            </>
+          ) : (
+            <>
+              <Card.Title> Debts: </Card.Title>
+              <Card.Text> {debt_str}</Card.Text>
+            </>
+          )}
+        </div>
       </Card.Body>
     </Card>
   );

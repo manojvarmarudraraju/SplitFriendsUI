@@ -5,7 +5,7 @@ import { Navigate } from "react-router";
 function App() {
   return (
     <div className="App" fluid>
-      <Navigate to="/Home" />
+      <Navigate to="/AddExpense" />
     </div>
   );
 }

@@ -3,9 +3,10 @@
     "_id": {
       "$oid": "619c7898750e68ecd3d89e9f"
     },
-    "name": "group1",
+    "name": "Group1",
     "admin": "619b8febb77400a34d2db054",
-    "members": []
+    "members": [],
+    "debts": {}
   },
   {
     "_id": {
@@ -13,7 +14,12 @@
     },
     "name": "group2",
     "members": ["Abi", "Manoj", "Harsh"],
-    "admin": "619b8febb77400a34d2db054"
+    "admin": "619b8febb77400a34d2db054",
+    "debts": {
+      "Abijith": -40,
+      "Subash": 50,
+      "Nandan": 70
+    }
   },
   {
     "_id": {
@@ -21,7 +27,8 @@
     },
     "name": "group1",
     "admin": "619b8febb77400a34d2db054",
-    "members": ["hh", "sse", "rhrhr", "rbbw"]
+    "members": ["hh", "sse", "rhrhr", "rbbw"],
+    "debts": {}
   },
   {
     "_id": {
@@ -29,7 +36,8 @@
     },
     "name": "group2",
     "members": ["Abi", "Manoj", "Harsh"],
-    "admin": "619b8febb77400a34d2db054"
+    "admin": "619b8febb77400a34d2db054",
+    "debts": {}
   },
   {
     "_id": {
@@ -37,7 +45,21 @@
     },
     "name": "group1",
     "admin": "619b8febb77400a34d2db054",
-    "members": ["H", "av"]
+    "members": ["H", "av"],
+    "debts": {
+      "Abijith": -40,
+      "Subash": 50,
+      "Nandan": 70,
+      "Abi": -40,
+      "Subu": 50,
+      "Nandy": 70,
+      "Abij": -40,
+      "Sub": 50,
+      "Nadan": 70,
+      "Ai": -40,
+      "ubu": 50,
+      "andy": 70
+    }
   },
   {
     "_id": {
@@ -45,7 +67,8 @@
     },
     "name": "group2",
     "members": ["Abi", "Manoj", "Harsh"],
-    "admin": "619b8febb77400a34d2db054"
+    "admin": "619b8febb77400a34d2db054",
+    "debts": {}
   },
   {
     "_id": {
@@ -53,7 +76,8 @@
     },
     "name": "group1",
     "admin": "619b8febb77400a34d2db054",
-    "members": []
+    "members": [],
+    "debts": {}
   },
   {
     "_id": {
@@ -61,6 +85,7 @@
     },
     "name": "group2",
     "members": ["Abi", "Manoj", "Harsh"],
-    "admin": "619b8febb77400a34d2db054"
+    "admin": "619b8febb77400a34d2db054",
+    "debts": {}
   }
 ]
