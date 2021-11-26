@@ -13,20 +13,24 @@ import Activity from "./components/activity";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
+import { Provider } from 'react-redux'
+import store from './store'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
         <Route path="/GroupComponent" element={<GroupComponent />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/AddExpense" element={<AddExpense />} />
         <Route path="/Activity" element={<Activity />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );
