@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="App" fluid>
-      Hello World
+      <Navigate to="/AddExpense" />
     </div>
   );
 }

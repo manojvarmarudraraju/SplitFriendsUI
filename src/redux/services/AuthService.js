@@ -22,7 +22,9 @@ const login = (obj) => {
 
 const logout = () => {
   localStorage.removeItem("user");
+
   localStorage.removeItem("token");
+
 };
 
 export default {

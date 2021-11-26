@@ -7,9 +7,11 @@ import {
   } from "../actions/types";
   
   const user = JSON.parse(localStorage.getItem("user"));
+
   const token = JSON.parse(localStorage.getItem("token"));
 
   const initialState = (user && token) ? { isLoggedIn: true, user, token } : { isLoggedIn: false, user: null, token: null };
+
   
   export default function (state = initialState, action) {
     const { type, payload } = action;
@@ -30,21 +32,27 @@ import {
           ...state,
           isLoggedIn: true,
           user: payload.user,
+
           token: payload.token,
+
         };
       case LOGIN_FAIL:
         return {
           ...state,
           isLoggedIn: false,
           user: null,
+
           token: null,
+
         };
       case LOGOUT:
         return {
           ...state,
           isLoggedIn: false,
           user: null,
+
           token: null,
+
         };
       default:
         return state;

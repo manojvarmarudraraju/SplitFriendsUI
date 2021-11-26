@@ -12,19 +12,24 @@ import AuthService from "../services/AuthService";
 export const register = (obj) => (dispatch) => {
     return AuthService.register(obj).then(
         (response) => {
+
             const message = "Registration Successful!";
+
             dispatch({
                 type: REGISTER_SUCCESS,
             });
 
             dispatch({
                 type: SET_MESSAGE,
+
                 payload: message,
+
             });
 
             return Promise.resolve();
         },
         (error) => {
+
             const message = "Something went wrong.";
 
             dispatch({
@@ -47,6 +52,7 @@ export const login = (obj) => (dispatch) => {
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: {
+
                     user: data.user,
                     token: data.token,
                 },
@@ -55,7 +61,9 @@ export const login = (obj) => (dispatch) => {
             return Promise.resolve();
         },
         (error) => {
+
             const message = "Something went wrong.";
+
 
             dispatch({
                 type: LOGIN_FAIL,

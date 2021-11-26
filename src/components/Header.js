@@ -3,7 +3,6 @@ import {
   Navbar,
   Container,
   Nav,
-  Form,
   FormControl,
   Button,
   InputGroup,
@@ -11,10 +10,11 @@ import {
   Dropdown,
 } from "react-bootstrap";
 import "./styles/Header.css";
-import { AiFillHome } from "react-icons/ai";
-import { BsPlusCircleFill } from "react-icons/bs";
+import { MdAddCircleOutline } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
+import { HiOutlineLogout } from "react-icons/hi";
+import membersData from "./data/members.json";
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
@@ -42,8 +42,14 @@ const Header = (props) => {
                   Search Members
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu style={{ backgroundColor: "#73a47" }}>
-                  <InputGroup className="mb-1">
+                <Dropdown.Menu
+                  style={{
+                    backgroundColor: "#73a47",
+                    overflow: "auto",
+                    maxHeight: "15rem",
+                  }}
+                >
+                  <InputGroup className="mb-1 position-sticky top-0">
                     <FormControl
                       placeholder="Recipient's username"
                       aria-label="Recipient's username"
@@ -53,14 +59,19 @@ const Header = (props) => {
                       <FaSearch />
                     </InputGroup.Text>
                   </InputGroup>
-                  <Dropdown.Item href="#">Arabic</Dropdown.Item>
-                  <Dropdown.Item href="#">English</Dropdown.Item>
+                  {Object.keys(membersData.members).map((val) => {
+                    return (
+                      <Dropdown.Item>
+                        {membersData["members"][val]}
+                      </Dropdown.Item>
+                    );
+                  })}
                 </Dropdown.Menu>
               </Dropdown>
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="danger" onClick={handleClose}>
               Close
             </Button>
             <Button variant="primary" onClick={handleClose}>
@@ -69,9 +80,9 @@ const Header = (props) => {
           </Modal.Footer>
         </Modal>
       </>
-      <Navbar bg="dark" expand="lg">
+      <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
-          <Navbar.Brand href="#" id="navBrand">
+          <Navbar.Brand href="/Home" id="navBrand">
             Splitwith Friends
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
@@ -81,27 +92,27 @@ const Header = (props) => {
               style={{ maxHeight: "100px" }}
               navbarScroll
             >
-              <Nav.Link id="navItem1">
-                <AiFillHome style={{ marginBottom: "4px" }} />
-                Home
-              </Nav.Link>
               <Nav.Link id="navItem1" onClick={handleShow}>
-                <BsPlusCircleFill style={{ marginBottom: "3px" }} /> Create
-                Group
+                <MdAddCircleOutline
+                  fontSize="1.5rem"
+                  style={{ marginBottom: "3px" }}
+                />{" "}
+                Create Group
               </Nav.Link>
-              <Nav.Link id="navItem1">
-                <FiActivity style={{ marginBottom: "3px" }} /> Activity
+              <Nav.Link href="/Activity" id="navItem1">
+                <FiActivity fontSize="1.5rem" style={{ marginBottom: "3px" }} />{" "}
+                Activity
               </Nav.Link>
             </Nav>
-            <Form className="d-flex">
-              <FormControl
-                type="search"
-                placeholder="Search"
-                className="me-2"
-                aria-label="Search"
-              />
-              <Button variant="outline-success">Search</Button>
-            </Form>
+            <Nav>
+              <Nav.Link href="/AddExpense" id="navItem1">
+                <HiOutlineLogout
+                  fontSize="1.5rem"
+                  style={{ marginBottom: "3px" }}
+                />{" "}
+                Logout
+              </Nav.Link>
+            </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>

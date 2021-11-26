@@ -8,7 +8,6 @@ import { Navigate } from 'react-router';
 var obj = {};
 
 const Signup = () => {
-
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -114,3 +113,4 @@ const Signup = () => {
 }
  
 export default Signup;
+

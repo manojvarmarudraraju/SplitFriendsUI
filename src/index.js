@@ -1,12 +1,15 @@
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import reportWebVitals from './reportWebVitals';
-import Login from './components/Login';
-import Signup from './components/Signup';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import reportWebVitals from "./reportWebVitals";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import GroupComponent from "./components/GroupComponent";
+import Home from "./components/Home";
+import AddExpense from "./components/AddExpense";
+import Activity from "./components/activity";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
@@ -18,9 +21,13 @@ ReactDOM.render(
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path='/' element={<App />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Signup />} />
+          <Route path="/" element={<App />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Signup />} />
+        <Route path="/GroupComponent" element={<GroupComponent />} />
+        <Route path="/Home" element={<Home />} />
+        <Route path="/AddExpense" element={<AddExpense />} />
+        <Route path="/Activity" element={<Activity />} />
         </Routes>
       </Router>
     </Provider>
