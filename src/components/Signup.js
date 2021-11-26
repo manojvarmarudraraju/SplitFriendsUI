@@ -2,7 +2,7 @@ import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../actions/auth";
+import { register } from "../redux/actions/auth";
 import { Navigate } from 'react-router';
 
 var obj = {};

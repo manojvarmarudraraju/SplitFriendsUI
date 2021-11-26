@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from 'react-router';
-import { login } from "../actions/auth";
+import { login } from '../redux/actions/auth';
 
 const Login = (props) => {
 
