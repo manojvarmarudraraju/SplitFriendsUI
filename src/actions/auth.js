@@ -12,7 +12,7 @@ import AuthService from "../services/AuthService";
 export const register = (obj) => (dispatch) => {
     return AuthService.register(obj).then(
         (response) => {
-            const message = "Registration Successful!".toString();
+            const message = "Registration Successful!";
             dispatch({
                 type: REGISTER_SUCCESS,
             });
@@ -25,12 +25,7 @@ export const register = (obj) => (dispatch) => {
             return Promise.resolve();
         },
         (error) => {
-            const message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = "Something went wrong.";
 
             dispatch({
                 type: REGISTER_FAIL,
@@ -60,12 +55,7 @@ export const login = (obj) => (dispatch) => {
             return Promise.resolve();
         },
         (error) => {
-            const message =
-                (error.response &&
-                    error.response.data &&
-                    error.response.data.message) ||
-                error.message ||
-                error.toString();
+            const message = "Something went wrong.";
 
             dispatch({
                 type: LOGIN_FAIL,
