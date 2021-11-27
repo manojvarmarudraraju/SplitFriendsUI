@@ -49,6 +49,19 @@ export const register = (obj) => (dispatch) => {
 export const login = (obj) => (dispatch) => {
     return AuthService.login(obj).then(
         (data) => {
+            if(data.token === null || data.user === null) {
+                const message = "Something went wrong.";
+                dispatch({
+                    type: LOGIN_FAIL,
+                });
+
+                dispatch({
+                    type: SET_MESSAGE,
+                    payload: message,
+                });
+
+                return Promise.reject();
+            }
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: {
