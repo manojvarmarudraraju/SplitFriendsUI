@@ -15,11 +15,32 @@ import { FiActivity } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import membersData from "./data/members.json";
+import { logout } from "../redux/actions/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router";
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const { isLoggedIn } = useSelector(state => state.auth);
+
+  const dispatch = useDispatch();
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+}
+
+  const logOut = () => {
+    dispatch(logout())
+                .then(() => {
+                    props.history.push("/login");
+                    window.location.reload();
+                })
+                .catch(() => {});
+  };
+
   return (
     <>
       <>
@@ -105,7 +126,7 @@ const Header = (props) => {
               </Nav.Link>
             </Nav>
             <Nav>
-              <Nav.Link href="/AddExpense" id="navItem1">
+              <Nav.Link href="/login" id="navItem1" onClick={logOut}>
                 <HiOutlineLogout
                   fontSize="1.5rem"
                   style={{ marginBottom: "3px" }}

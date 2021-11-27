@@ -17,7 +17,7 @@ const Login = (props) => {
     const dispatch = useDispatch();
 
     if (isLoggedIn) {
-        return <Navigate to="/" />;
+        return <Navigate to="/home" />;
     }
 
     const handleLogin = (e) => {
