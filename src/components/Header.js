@@ -43,6 +43,7 @@ const Header = (props) => {
 
   const handleClose = () => {
     setShow(false);
+    window.location.reload();
     setFilteredMmeber(members)
     setSelectedMember([])
     setSearchMember("")
@@ -225,8 +226,8 @@ const Header = (props) => {
       </>
       <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
-          <Navbar.Brand id="navBrand">
-            <Link to="/home">Splitwith Friends</Link>
+          <Navbar.Brand href="/home" id="navBrand">
+          Splitwith Friends
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -242,9 +243,9 @@ const Header = (props) => {
                 />{" "}
                 Create Group
               </Nav.Link>
-              <Nav.Link id="navItem1">
+              <Nav.Link href="/activity" id="navItem1">
                 <FiActivity fontSize="1.5rem" style={{ marginBottom: "3px" }} />{" "}
-                <Link to="/activity">Activity</Link>
+                Activity
               </Nav.Link>
             </Nav>
             <Nav>

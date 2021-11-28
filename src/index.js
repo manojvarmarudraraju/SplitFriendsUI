@@ -15,23 +15,26 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 import { Provider } from 'react-redux'
-import store from './store'
+import {store, persistor }from './store'
+import { PersistGate } from 'redux-persist/integration/react'
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Signup />} />
-        <Route path="/GroupComponent" element={<GroupComponent />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/AddExpense" element={<AddExpense />} />
-        <Route path="/Activity" element={<Activity />} />
-        <Route path="/ShowGroup" element={<ShowGroup />} />
-        </Routes>
-      </Router>
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<App />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Signup />} />
+          <Route path="/GroupComponent" element={<GroupComponent />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/AddExpense" element={<AddExpense />} />
+          <Route path="/Activity" element={<Activity />} />
+          <Route path="/ShowGroup" element={<ShowGroup />} />
+          </Routes>
+        </Router>
+      </PersistGate>
     </Provider>
 
   </React.StrictMode>,
