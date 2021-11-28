@@ -14,25 +14,23 @@ import {
 import "./styles/Header.css";
 import { MdAddCircleOutline } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
-import { FaSearch } from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
-import membersData from "./data/members.json";
 import { logout } from "../redux/actions/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
 import { IoMdAdd } from "react-icons/io";
 import { addGroup } from "../redux/actions/group";
-import { clearMessage } from '../redux/actions/message'
-
+import { clearMessage } from "../redux/actions/message";
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
   const [searchMember, setSearchMember] = useState("");
   const [groupName, setGroupName] = useState("");
 
-  const { isLoggedIn, members, user } = useSelector(state => state.auth);
+  const { isLoggedIn, members, user } = useSelector((state) => state.auth);
 
-  const { message } = useSelector(state => state.message);
+  const { message } = useSelector((state) => state.message);
 
   const [filteredMember, setFilteredMmeber] = useState(members);
 
@@ -42,12 +40,12 @@ const Header = (props) => {
 
   const handleClose = () => {
     setShow(false);
-    setFilteredMmeber(members)
-    setSelectedMember([])
-    setSearchMember("")
-    setGroupName("")
+    setFilteredMmeber(members);
+    setSelectedMember([]);
+    setSearchMember("");
+    setGroupName("");
     setLoading(false);
-  }
+  };
 
   const handleShow = () => setShow(true);
 
@@ -58,38 +56,44 @@ const Header = (props) => {
   }, [show]);
 
   useEffect(() => {
-    if(members === null) {
-      return
+    if (members === null) {
+      return;
     }
-    const newFiltered = members.filter((item) => !(selectedMember.includes(item)));
+    const newFiltered = members.filter(
+      (item) => !selectedMember.includes(item)
+    );
     setFilteredMmeber(newFiltered);
-  }, [selectedMember])
+  }, [selectedMember]);
 
   useEffect(() => {
-    if(members === null) {
-      return
+    if (members === null) {
+      return;
     }
-    if(searchMember.length <= 0) {
-      let temp = members.filter((item) => !(selectedMember.includes(item)))
+    if (searchMember.length <= 0) {
+      let temp = members.filter((item) => !selectedMember.includes(item));
       setFilteredMmeber(temp);
     } else {
-      let temp = members.filter((item) => item.displayName.toLowerCase().includes(searchMember.toLocaleLowerCase()))
-      temp = temp.filter((item) => !(selectedMember.includes(item)))
+      let temp = members.filter((item) =>
+        item.displayName
+          .toLowerCase()
+          .includes(searchMember.toLocaleLowerCase())
+      );
+      temp = temp.filter((item) => !selectedMember.includes(item));
       setFilteredMmeber(temp);
     }
-  }, [searchMember])
+  }, [searchMember]);
 
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
-}
+  }
 
   const logOut = () => {
     dispatch(logout())
-    .then(() => {
-      props.history.push("/login");
-      window.location.reload();
+      .then(() => {
+        props.history.push("/login");
+        window.location.reload();
       })
-    .catch(() => {});
+      .catch(() => {});
   };
 
   const onUserSelected = (id) => {
@@ -97,48 +101,48 @@ const Header = (props) => {
     const currSelected = filteredMember.filter((item) => item._id === id);
     //const isNotPresent = selectedMember.filter((item) => item.displayName === currSelected[0].displayName).length <= 0;
     const isNotPresent = !selectedMember.includes(currSelected[0]);
-    if(isNotPresent) {
-      setSelectedMember([...selectedMember, currSelected[0]]); 
+    if (isNotPresent) {
+      setSelectedMember([...selectedMember, currSelected[0]]);
     }
     //setFilteredMmeber(members)
-  }
+  };
 
   const onUserRemoved = (val) => {
     const removed = selectedMember.filter((item) => item._id === val._id);
     const afterRemove = selectedMember.filter((item) => item._id !== val._id);
     setSelectedMember(afterRemove);
-    setFilteredMmeber([...filteredMember,removed[0]]);
-  }
+    setFilteredMmeber([...filteredMember, removed[0]]);
+  };
 
   const onSaveChanges = (e) => {
     e.preventDefault();
-    if(groupName == "" || selectedMember.length < 0) {
+    if (groupName === "" || selectedMember.length < 0) {
       alert("Please fill in all the details!");
     } else {
       setLoading(true);
-      const obj = {}
-      obj['name'] = groupName;
-      obj['admin'] = user._id;
+      const obj = {};
+      obj["name"] = groupName;
+      obj["admin"] = user._id;
       let membersId = [];
-      selectedMember.map((item) => membersId.push(item._id))
-      obj['members'] = membersId
+      selectedMember.map((item) => membersId.push(item._id));
+      obj["members"] = membersId;
       dispatch(addGroup(obj))
-      .then(() => {
-        handleClose();
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+        .then(() => {
+          handleClose();
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     }
-  }
+  };
 
   const onSearchChange = (event) => {
     setSearchMember(event.target.value);
-  }
+  };
 
   const onChangeGroupName = (event) => {
     setGroupName(event.target.value);
-  }
+  };
 
   return (
     <>
@@ -175,7 +179,7 @@ const Header = (props) => {
                       placeholder="Search contacts to add"
                       aria-label="Search contacts to add"
                       aria-describedby="basic-addon2"
-                      value = {searchMember}
+                      value={searchMember}
                       onChange={onSearchChange}
                     />
                   </InputGroup>
@@ -198,7 +202,13 @@ const Header = (props) => {
                 {selectedMember.map((val) => {
                   return (
                     <>
-                      <Alert variant={ "dark"} dismissible onClose={() => onUserRemoved(val)}>{val.displayName}</Alert>
+                      <Alert
+                        variant={"dark"}
+                        dismissible
+                        onClose={() => onUserRemoved(val)}
+                      >
+                        {val.displayName}
+                      </Alert>
                     </>
                   );
                 })}
@@ -206,7 +216,7 @@ const Header = (props) => {
             )}
             {message && (
               <>
-                <Alert variant={ "danger" }>{message}</Alert>
+                <Alert variant={"danger"}>{message}</Alert>
               </>
             )}
           </Modal.Body>
@@ -215,7 +225,15 @@ const Header = (props) => {
               Close
             </Button>
             <Button variant="primary" onClick={onSaveChanges}>
-              {loading && (<Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />)}
+              {loading && (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              )}
               &nbsp;
               <span>Save Changes</span>
             </Button>
@@ -247,6 +265,10 @@ const Header = (props) => {
               </Nav.Link>
             </Nav>
             <Nav>
+              <Nav.Link id="navItem1">
+                <FaUserAlt style={{ marginBottom: "3px", padding: "0.5px" }} />{" "}
+                Abijith
+              </Nav.Link>
               <Nav.Link href="/login" id="navItem1" onClick={logOut}>
                 <HiOutlineLogout
                   fontSize="1.5rem"

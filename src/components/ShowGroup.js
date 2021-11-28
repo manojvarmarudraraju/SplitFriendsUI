@@ -9,12 +9,16 @@ import {
   Form,
   OverlayTrigger,
   Tooltip,
+  Nav,
 } from "react-bootstrap";
 import { IoMdListBox } from "react-icons/io";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
 import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
+import { Bar, Pie } from "react-chartjs-2";
+import Chart from "chart.js/auto";
 
 class ShowGroup extends Component {
   constructor(props) {
@@ -25,26 +29,24 @@ class ShowGroup extends Component {
       addExp: false,
       lgShow: false,
       SplitName: { formHorizontalRadios: "equal" },
+      chartHeader: { navChartItem: "weekly" },
       amountValue: "",
-      labels: ["January", "February", "March", "April", "May"],
-      datasets: [
-        {
-          label: "Rainfall",
-          backgroundColor: "rgba(75,192,192,1)",
-          borderColor: "rgba(0,0,0,1)",
-          borderWidth: 2,
-          data: [65, 59, 80, 81, 56],
-        },
-      ],
     };
   }
-
   handleClose = () => this.setState({ lgShow: false });
   handleChange = (e) => {
     const { name, value } = e.target;
     this.setState({
       SplitName: {
         [name]: value,
+      },
+    });
+  };
+  handleNav = (e) => {
+    const { name, id } = e.target;
+    this.setState({
+      chartHeader: {
+        [name]: id,
       },
     });
   };
@@ -59,7 +61,7 @@ class ShowGroup extends Component {
     var debt_str = "";
     Object.keys(this.state.data.debts).forEach((val) => {
       debt_str +=
-        val.toString() + ":" + this.state.data.debts[val].toString() + ", ";
+        val.toString() + ":" + this.state.data.debts[val].toString() + "$, ";
     });
     debt_str = debt_str.slice(0, -2);
     return (
@@ -167,7 +169,7 @@ class ShowGroup extends Component {
         </>
         <Container className="mt-1">
           <Row>
-            <Col className="border border-1" lg="8">
+            <Col lg="8">
               <Card>
                 <Card.Header as="h5">Group Name</Card.Header>
                 <Card.Body>
@@ -182,16 +184,35 @@ class ShowGroup extends Component {
                         {val}
                       </Button>
                     ))}
-                    <Button
-                      variant="primary"
-                      className="float-end rounded-pill"
-                      onClick={() => this.setState({ lgShow: true })}
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id="button-tooltip-2">Add Expense</Tooltip>
+                      }
                     >
-                      <IoMdListBox fontSize="1.5em" className="mb-1" />
-                      Add Expense
-                    </Button>
+                      <Button
+                        variant="primary"
+                        className="float-end rounded-pill"
+                        onClick={() => this.setState({ lgShow: true })}
+                      >
+                        <IoMdListBox fontSize="1.5em" className="mb-1" />
+                      </Button>
+                    </OverlayTrigger>
+                    <OverlayTrigger
+                      placement="bottom"
+                      overlay={
+                        <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
+                      }
+                    >
+                      <Button
+                        variant="danger"
+                        className="float-end rounded-pill"
+                      >
+                        <MdDelete fontSize="1.5em" className="mb-1" />
+                      </Button>
+                    </OverlayTrigger>
                   </Card.Title>
-                  <Card.Title> Debts: </Card.Title>
+                  <Card.Title>Debts:</Card.Title>
                   <Card.Text>{debt_str}</Card.Text>
                 </Card.Body>
               </Card>
@@ -215,7 +236,7 @@ class ShowGroup extends Component {
                               >
                                 <div className="m-1 ">
                                   <RiPencilFill
-                                    fontSize="1.6em"
+                                    fontSize="1.5em"
                                     color="darkblue"
                                   />
                                 </div>
@@ -230,7 +251,7 @@ class ShowGroup extends Component {
                               >
                                 <div className="m-1">
                                   <RiDeleteBin5Fill
-                                    fontSize="1.6em"
+                                    fontSize="1.5em"
                                     color="red"
                                   />
                                 </div>
@@ -269,7 +290,106 @@ class ShowGroup extends Component {
                 </Card>
               </Row>
             </Col>
-            <Col className="border border-1"></Col>
+            <Col className="mt-5">
+              <Nav justify variant="pills" defaultActiveKey="home">
+                <Nav.Item>
+                  <Nav.Link
+                    eventKey="home"
+                    name="navChartItem"
+                    id="weekly"
+                    onClick={this.handleNav}
+                  >
+                    Weekly
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link
+                    eventKey="link-1"
+                    name="navChartItem"
+                    id="monthly"
+                    onClick={this.handleNav}
+                  >
+                    Monthly
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
+              {console.log(this.state.chartHeader)}
+              {this.state.chartHeader["navChartItem"] === "weekly" ? (
+                <div>
+                  <Bar
+                    data={{
+                      labels: ["January", "February", "March", "April", "May"],
+                      datasets: [
+                        {
+                          label: "Expenses",
+                          fill: true,
+                          backgroundColor: "blue",
+                          borderColor: "rgba(0,0,0,1)",
+                          borderWidth: 1,
+                          data: [65, 59, 80, 81, 56],
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: "Expenses per month",
+                          fontSize: 10,
+                        },
+                        legend: {
+                          display: true,
+                          position: "bottom",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Pie
+                    data={{
+                      labels: ["January", "February", "March", "April", "May"],
+                      datasets: [
+                        {
+                          label: "Rainfall",
+                          backgroundColor: [
+                            "#B21F00",
+                            "#C9DE00",
+                            "#2FDE00",
+                            "#00A6B4",
+                            "#6800B4",
+                          ],
+                          hoverBackgroundColor: [
+                            "#501800",
+                            "#4B5000",
+                            "#175000",
+                            "#003350",
+                            "#35014F",
+                          ],
+                          data: [65, 59, 80, 81, 56, 65, 59, 80, 81, 56],
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        title: {
+                          display: true,
+                          text: "Expenses per month",
+                          fontSize: 10,
+                        },
+                        legend: {
+                          display: true,
+                          position: "bottom",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              )}
+            </Col>
           </Row>
         </Container>
       </>

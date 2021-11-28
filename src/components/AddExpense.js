@@ -11,8 +11,16 @@ class AddExpense extends Component {
       SplitName: { formHorizontalRadios: "equal" },
       amountValue: "",
     };
+    this.handleText = this.handleText.bind(this);
   }
-  handleClose = () => this.setState({ lgShow: false });
+  handleClose = () => {
+    this.setState({
+      lgShow: false,
+      SplitName: {
+        formHorizontalRadios: "equal",
+      },
+    });
+  };
   handleChange = (e) => {
     const { name, value } = e.target;
     this.setState({
@@ -22,11 +30,13 @@ class AddExpense extends Component {
     });
   };
   handleText = (evt) => {
-    const amountValue = evt.target.validity.valid
-      ? evt.target.value
-      : this.state.amountValue;
+    if (evt.target.value.match("[\\d]{1,99}([.]\\d{1,99})?") != null) {
+      // const amountValue = evt.target.validity.valid
+      //   ? evt.target.value
+      //   : this.state.amountValue;
 
-    this.setState({ amountValue: amountValue });
+      this.setState({ amountValue: evt.target.value });
+    }
   };
   render() {
     return (
@@ -107,10 +117,11 @@ class AddExpense extends Component {
                         <input
                           id={index}
                           type="text"
-                          pattern="[0-9]*.[0-9]*"
                           name="number"
                           placeholder="$0.00"
                           className="m-2"
+                          onChange={(event) => this.handleText(event)}
+                          value={this.state.amountValue}
                         />
                       </div>
                     ))}
