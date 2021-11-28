@@ -4,6 +4,9 @@ import { useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from 'react-router';
 import { login } from '../redux/actions/auth';
+import { clearMessage } from '../redux/actions/message'
+import { useEffect } from 'react';
+
 
 const Login = (props) => {
 
@@ -15,6 +18,10 @@ const Login = (props) => {
     const { message } = useSelector(state => state.message);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(clearMessage());
+    }, []);
 
     if (isLoggedIn) {
         return <Navigate to="/home" />;

@@ -49,7 +49,7 @@ export const register = (obj) => (dispatch) => {
 export const login = (obj) => (dispatch) => {
     return AuthService.login(obj).then(
         (data) => {
-            if(data.token === null || data.user === null) {
+            if(data.token === null || data.user.user === null) {
                 const message = "Something went wrong.";
                 dispatch({
                     type: LOGIN_FAIL,
@@ -62,11 +62,15 @@ export const login = (obj) => (dispatch) => {
 
                 return Promise.reject();
             }
+            const new_members = data.user.users.filter((item) => item._id !== data.user.user._id)
+            new_members.map((item) => {
+                item['isSelected'] = false;
+            })
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: {
-
-                    user: data.user,
+                    members: new_members,
+                    user: data.user.user,
                     token: data.token,
                 },
             });

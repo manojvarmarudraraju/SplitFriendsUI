@@ -1,8 +1,9 @@
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { useState} from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../redux/actions/auth";
+import { clearMessage } from '../redux/actions/message'
 import { Navigate } from 'react-router';
 
 var obj = {};
@@ -19,8 +20,12 @@ const Signup = () => {
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(clearMessage());
+    }, []);
+
     if (isLoggedIn) {
-        return <Navigate to="/" />;
+        return <Navigate to="/home" />;
     }
 
     return (
