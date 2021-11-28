@@ -16,12 +16,14 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
+import membersData from "./data/members.json";
 import { logout } from "../redux/actions/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
 import { IoMdAdd } from "react-icons/io";
 import { addGroup } from "../redux/actions/group";
 import { clearMessage } from '../redux/actions/message'
+
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
