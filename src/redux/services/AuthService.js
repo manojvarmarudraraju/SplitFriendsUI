@@ -27,15 +27,29 @@ const login = (obj) => {
 const logout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
+  localStorage.removeItem("member");
+  localStorage.removeItem("groups");
 };
 
 const addGroup = (obj) => {
   return axios.put(GROUP_URL + "new", obj, { headers: AuthHeader() });
-}
+};
+
+const getAllGroups = () => {
+  return axios
+  .get(GROUP_URL + "data", { headers: AuthHeader() })
+  .then((response) => {
+    if (response.data) {
+      localStorage.setItem("groups", JSON.stringify(response.data));
+    }
+    return response.data;
+  });
+};
 
 export default {
   register,
   login,
   logout,
-  addGroup
+  addGroup,
+  getAllGroups,
 };

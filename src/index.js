@@ -26,7 +26,7 @@ ReactDOM.render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
         <Route path="/GroupComponent" element={<GroupComponent />} />
-        <Route path="/Home" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/AddExpense" element={<AddExpense />} />
         <Route path="/Activity" element={<Activity />} />
         <Route path="/ShowGroup" element={<ShowGroup />} />

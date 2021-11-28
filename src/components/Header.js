@@ -23,6 +23,7 @@ import { Navigate } from "react-router";
 import { IoMdAdd } from "react-icons/io";
 import { addGroup } from "../redux/actions/group";
 import { clearMessage } from '../redux/actions/message'
+import { Link } from "react-router-dom";
 
 
 const Header = (props) => {
@@ -224,8 +225,8 @@ const Header = (props) => {
       </>
       <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
-          <Navbar.Brand href="/Home" id="navBrand">
-            Splitwith Friends
+          <Navbar.Brand id="navBrand">
+            <Link to="/home">Splitwith Friends</Link>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -241,9 +242,9 @@ const Header = (props) => {
                 />{" "}
                 Create Group
               </Nav.Link>
-              <Nav.Link href="/Activity" id="navItem1">
+              <Nav.Link id="navItem1">
                 <FiActivity fontSize="1.5rem" style={{ marginBottom: "3px" }} />{" "}
-                Activity
+                <Link to="/activity">Activity</Link>
               </Nav.Link>
             </Nav>
             <Nav>
