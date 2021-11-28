@@ -35,7 +35,7 @@ const Signup = () => {
                 <Col lg={6}>
                     <div className="login-container">
                         <div className='login-card'>
-                            <h4 className="align-start mb-3">Sign up to SplitFriends</h4>
+                            <h4 className="align-start mb-3">Sign up to Split with Friends</h4>
                             <Form className='login-form'>
                             {!successful && (
                                 <div>
