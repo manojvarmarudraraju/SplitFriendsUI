@@ -1,14 +1,18 @@
 import axios from "axios";
+import AuthHeader from "./AuthHeader";
 
-const API_URL = "http://localhost:8080/user/";
+const API_URL = "http://localhost:8080/";
+
+const USER_URL = API_URL + "user/"
+const GROUP_URL = API_URL + "group/"
 
 const register = (obj) => {
-  return axios.put(API_URL + "register", obj);
+  return axios.put(USER_URL + "register", obj);
 };
 
 const login = (obj) => {
   return axios
-    .post(API_URL + "login", obj)
+    .post(USER_URL + "login", obj)
     .then((response) => {
       if (response.data.token) {
         localStorage.setItem("token", JSON.stringify(response.data.token));
@@ -22,13 +26,16 @@ const login = (obj) => {
 
 const logout = () => {
   localStorage.removeItem("user");
-
   localStorage.removeItem("token");
-
 };
+
+const addGroup = (obj) => {
+  return axios.put(GROUP_URL + "new", obj, { headers: AuthHeader() });
+}
 
 export default {
   register,
   login,
   logout,
+  addGroup
 };

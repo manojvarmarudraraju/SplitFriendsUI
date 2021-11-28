@@ -4,6 +4,9 @@ import { useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from 'react-router';
 import { login } from '../redux/actions/auth';
+import { clearMessage } from '../redux/actions/message'
+import { useEffect } from 'react';
+
 
 const Login = (props) => {
 
@@ -16,8 +19,12 @@ const Login = (props) => {
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(clearMessage());
+    }, []);
+
     if (isLoggedIn) {
-        return <Navigate to="/" />;
+        return <Navigate to="/home" />;
     }
 
     const handleLogin = (e) => {
@@ -46,7 +53,7 @@ const Login = (props) => {
                 <Col lg={6}>
                     <div className="login-container">
                         <div className='login-card'>
-                            <h4 className="align-start mb-3">Log in to SplitFriends</h4>
+                            <h4 className="align-start mb-3">Log in to Split with Friends</h4>
                             <Form className='login-form' onSubmit={handleLogin}>
                                 <Form.Group as={Row} className="mb-3" controlId="email">
                                     <Form.Label className="align-start" column sm={2}>Email</Form.Label>

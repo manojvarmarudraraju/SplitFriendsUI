@@ -10,9 +10,10 @@ import {
 
   const token = JSON.parse(localStorage.getItem("token"));
 
-  const initialState = (user && token) ? { isLoggedIn: true, user, token } : { isLoggedIn: false, user: null, token: null };
+  const members = JSON.parse(localStorage.getItem("members"));
 
-  
+  const initialState = (user && token && members) ? { isLoggedIn: true, user, token, members } : { isLoggedIn: false, user: null, token: null, members: null };
+
   export default function (state = initialState, action) {
     const { type, payload } = action;
   
@@ -31,17 +32,17 @@ import {
         return {
           ...state,
           isLoggedIn: true,
+          members: payload.members,
           user: payload.user,
-
           token: payload.token,
 
         };
       case LOGIN_FAIL:
         return {
           ...state,
+          members: null,
           isLoggedIn: false,
           user: null,
-
           token: null,
 
         };
@@ -49,8 +50,8 @@ import {
         return {
           ...state,
           isLoggedIn: false,
+          members: null,
           user: null,
-
           token: null,
 
         };

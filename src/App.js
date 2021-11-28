@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="App" fluid>
-      <Navigate to="/ShowGroup" />
+      <Navigate to="/home" />
     </div>
   );
 }
