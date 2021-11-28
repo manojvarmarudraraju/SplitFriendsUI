@@ -53,7 +53,6 @@ import {
           members: null,
           user: null,
           token: null,
-
         };
       default:
         return state;

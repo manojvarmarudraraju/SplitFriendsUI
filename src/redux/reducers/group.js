@@ -1,4 +1,4 @@
-import { GROUP_ADD_FAILURE, GROUP_ADD_SUCCESS } from "../actions/types";
+import { GROUP_ADD_FAILURE, GROUP_ADD_SUCCESS, GROUP_GET_FAILURE, GROUP_GET_SUCCESS, LOGOUT, } from "../actions/types";
 
 const groups = JSON.parse(localStorage.getItem("groups"));
 
@@ -16,8 +16,17 @@ export default function (state = initialState, action) {
           return {
             ...state,
           };
+        case GROUP_GET_FAILURE:
+          return {
+            ...state,
+            groups: null,
+          };
+        case GROUP_GET_SUCCESS:
+          return {
+            ...state,
+            groups: payload.groups,
+          };
         default:
           return state;
       }
-
 }

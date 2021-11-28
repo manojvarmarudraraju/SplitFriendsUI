@@ -1,87 +1,65 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import Header from "./Header";
 import GroupComponent from "./GroupComponent";
 import Data from "./data/groupdata.json";
-import ReactPaginate from "react-paginate";
-import "./styles/Home.css";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from 'react-router';
+import { getAllGroups } from '../redux/actions/group';
+import { clearMessage } from '../redux/actions/message'
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      offset: 0,
-      data: [],
-      perPage: 4,
-      currentPage: 0,
-    };
-    this.handlePageClick = this.handlePageClick.bind(this);
-  }
+const Home = (props) => {
 
-  receivedData() {
-    const data = Data;
-    const slice = data.slice(
-      this.state.offset,
-      this.state.offset + this.state.perPage
-    );
-    const postData = slice.map((val) => <GroupComponent data={val} />);
+  const [isGetDataSuccess, setIsGetDataSuccess] = useState(false);
+  const [isAPICalled, setIsAPICalled] = useState(false);
 
-    this.setState({
-      pageCount: Math.ceil(data.length / this.state.perPage),
+  const { isLoggedIn } = useSelector(state => state.auth);
+  const { message } = useSelector(state => state.message);
+  const { groups } = useSelector(state => state.group);
 
-      postData,
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearMessage())
+    if (isAPICalled) {
+      return
+    }
+    setIsAPICalled(true)
+    dispatch(getAllGroups())
+    .then(() => {
+      setIsGetDataSuccess(true);
+    })
+    .catch((e) => {
+      setIsGetDataSuccess(false);
+      setIsAPICalled(false);
     });
+  }, []);
+
+  useEffect(() => {
+    
+  });
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
   }
 
-  handlePageClick = (e) => {
-    const selectedPage = e.selected;
-    const offset = selectedPage * this.state.perPage;
-
-    this.setState(
-      {
-        currentPage: selectedPage,
-        offset: offset,
-      },
-      () => {
-        this.receivedData();
-      }
-    );
-  };
-
-  componentDidMount() {
-    this.receivedData();
-  }
-  render() {
-    return (
-      <>
-        <Header />
-        <Container>
-          <Row>
-            <Col></Col>
-            <Col lg="10">
-              <div>
-                {this.state.postData}
-                <ReactPaginate
-                  previousLabel={"prev"}
-                  nextLabel={"next"}
-                  breakLabel={"..."}
-                  breakClassName={"break-me"}
-                  pageCount={this.state.pageCount}
-                  marginPagesDisplayed={2}
-                  pageRangeDisplayed={5}
-                  onPageChange={this.handlePageClick}
-                  containerClassName={"pagination"}
-                  subContainerClassName={"pages pagination"}
-                  activeClassName={"active"}
-                />
-              </div>
-            </Col>
-            <Col></Col>
-          </Row>
-        </Container>
-      </>
-    );
-  }
+  return (
+    <>
+      <Header />
+      <Container>
+        <Row>
+          <Col></Col>
+          <Col lg="10">
+            {isGetDataSuccess && groups && (
+              groups.map((value) => {
+                return <GroupComponent data={value} />;
+              }))}
+          </Col>
+          <Col></Col>
+        </Row>
+      </Container>
+    </>
+  );
 }
 
 export default Home;

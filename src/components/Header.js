@@ -21,7 +21,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
 import { IoMdAdd } from "react-icons/io";
 import { addGroup } from "../redux/actions/group";
-import { clearMessage } from "../redux/actions/message";
+import { clearMessage } from '../redux/actions/message'
+import { Link } from "react-router-dom";
 
 const Header = (props) => {
   const [show, setShow] = useState(false);
@@ -40,10 +41,11 @@ const Header = (props) => {
 
   const handleClose = () => {
     setShow(false);
-    setFilteredMmeber(members);
-    setSelectedMember([]);
-    setSearchMember("");
-    setGroupName("");
+    window.location.reload();
+    setFilteredMmeber(members)
+    setSelectedMember([])
+    setSearchMember("")
+    setGroupName("")
     setLoading(false);
   };
 
@@ -242,8 +244,8 @@ const Header = (props) => {
       </>
       <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
-          <Navbar.Brand href="/Home" id="navBrand">
-            Splitwith Friends
+          <Navbar.Brand href="/home" id="navBrand">
+          Splitwith Friends
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -259,7 +261,7 @@ const Header = (props) => {
                 />{" "}
                 Create Group
               </Nav.Link>
-              <Nav.Link href="/Activity" id="navItem1">
+              <Nav.Link href="/activity" id="navItem1">
                 <FiActivity fontSize="1.5rem" style={{ marginBottom: "3px" }} />{" "}
                 Activity
               </Nav.Link>
