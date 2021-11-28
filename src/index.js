@@ -10,6 +10,7 @@ import GroupComponent from "./components/GroupComponent";
 import Home from "./components/Home";
 import AddExpense from "./components/AddExpense";
 import Activity from "./components/activity";
+import ShowGroup from "./components/ShowGroup";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
@@ -25,6 +26,7 @@ ReactDOM.render(
         <Route path="/Home" element={<Home />} />
         <Route path="/AddExpense" element={<AddExpense />} />
         <Route path="/Activity" element={<Activity />} />
+        <Route path="/ShowGroup" element={<ShowGroup />} />
       </Routes>
     </Router>
   </React.StrictMode>,

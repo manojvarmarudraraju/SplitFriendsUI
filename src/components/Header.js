@@ -14,6 +14,7 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { FiActivity } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
+import { IoMdAdd } from "react-icons/io";
 import membersData from "./data/members.json";
 
 const Header = (props) => {
@@ -49,7 +50,7 @@ const Header = (props) => {
                     maxHeight: "15rem",
                   }}
                 >
-                  <InputGroup className="mb-1 position-sticky top-0">
+                  <InputGroup className="mt-0 mb-2 position-sticky top-0">
                     <FormControl
                       placeholder="Recipient's username"
                       aria-label="Recipient's username"
@@ -61,9 +62,13 @@ const Header = (props) => {
                   </InputGroup>
                   {Object.keys(membersData.members).map((val) => {
                     return (
-                      <Dropdown.Item>
-                        {membersData["members"][val]}
-                      </Dropdown.Item>
+                      <>
+                        <Dropdown.Item>
+                          {membersData["members"][val]}
+                          <IoMdAdd className="float-end" color="darkblue" />
+                        </Dropdown.Item>
+                        <hr />
+                      </>
                     );
                   })}
                 </Dropdown.Menu>
