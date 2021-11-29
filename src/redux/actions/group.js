@@ -10,51 +10,50 @@ import { GROUP_ADD_FAILURE,
 import AuthService from "../services/AuthService";
 
 export const addGroup = (obj) => (dispatch) => {
-    return AuthService.addGroup(obj).then(
-        (response) => {
-            dispatch({
-                type: GROUP_ADD_SUCCESS,
-            });
-            return Promise.resolve();
-        },
-        (error) => {
-            dispatch({
-                type: GROUP_ADD_FAILURE,
-            });
-            dispatch({
-                type: SET_MESSAGE,
-                payload: "Something went wrong.",
-
-            });
-            return Promise.reject();
-        }
-    );
+  return AuthService.addGroup(obj).then(
+    (response) => {
+      dispatch({
+        type: GROUP_ADD_SUCCESS,
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: GROUP_ADD_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
 };
 
 export const getAllGroups = () => (dispatch) => {
-    return AuthService.getAllGroups().then(
-        (response) => {
-            dispatch({
-                type: GROUP_GET_SUCCESS,
-                payload: {
-                    groups: response.data,
-                }
-            });
-            return Promise.resolve();
+  return AuthService.getAllGroups().then(
+    (response) => {
+      dispatch({
+        type: GROUP_GET_SUCCESS,
+        payload: {
+          groups: response.data.reverse(),
         },
-        (error) => {
-            dispatch({
-                type: GROUP_GET_FAILURE,
-            });
-            dispatch({
-                type: SET_MESSAGE,
-                payload: "Something went wrong.",
-
-            });
-            return Promise.reject();
-        }
-    );
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: GROUP_GET_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
 };
+
 
 export const addExpense = (id, obj) => (dispatch) => {
     return AuthService.addExpense(id, obj).then(
@@ -77,3 +76,4 @@ export const addExpense = (id, obj) => (dispatch) => {
         }
     );
 };
+

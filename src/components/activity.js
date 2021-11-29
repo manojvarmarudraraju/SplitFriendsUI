@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import actData from "./data/activity.json";
 import Header from "./Header";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
