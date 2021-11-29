@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { login } from "../redux/actions/auth";
 import { connect } from "react-redux";
 import { addExpense } from "../redux/actions/group";
+import { clearMessage } from "../redux/actions/message";
 
 class AddExpense extends Component {
   constructor(props) {
@@ -22,6 +23,13 @@ class AddExpense extends Component {
     this.handleText = this.handleText.bind(this);
     this.handleAmount = this.handleAmount.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
+    this.clearMessage = this.clearMessage.bind(this);
+    this.clearMessage();
+  }
+
+  clearMessage = () => {
+    const { dispatch } = this.props;
+    dispatch(clearMessage());
   }
 
   handleAdd = () => {
@@ -241,6 +249,11 @@ class AddExpense extends Component {
                     ))}
               </div>
             </Form>
+            {this.state.message && (
+              <>
+                <Alert variant={"danger"}>{this.state.message}</Alert>
+              </>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button
