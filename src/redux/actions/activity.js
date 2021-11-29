@@ -12,7 +12,7 @@ export const getActivity = () => (dispatch) => {
       dispatch({
         type: ACTIVITY_GET_SUCCESS,
         payload: {
-          activity: response.result.activities,
+          activity: response.result.activities.reverse(),
         },
       });
       return Promise.resolve();

@@ -201,13 +201,14 @@ const Header = (props) => {
             </div>
             {selectedMember.length >= 1 && (
               <div className="selected-members pt-4">
-                {selectedMember.map((val) => {
+                {selectedMember.map((val, index) => {
                   return (
                     <>
                       <Alert
                         variant={"dark"}
                         dismissible
                         onClose={() => onUserRemoved(val)}
+                        key={index}
                       >
                         {val.displayName}
                       </Alert>

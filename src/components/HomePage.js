@@ -23,7 +23,9 @@ class HomeFinal extends Component {
       this.state.offset,
       this.state.offset + this.state.perPage
     );
-    const postData = slice.map((val) => <GroupComponent data={val} />);
+    const postData = slice.map((val, index) => (
+      <GroupComponent data={val} key={index} />
+    ));
 
     this.setState({
       pageCount: Math.ceil(data.length / this.state.perPage),
