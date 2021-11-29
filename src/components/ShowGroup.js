@@ -11,6 +11,7 @@ import {
   Tooltip,
   Nav,
 } from "react-bootstrap";
+import Header from "./Header";
 import { IoMdListBox } from "react-icons/io";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
@@ -167,6 +168,7 @@ class ShowGroup extends Component {
             </Modal.Footer>
           </Modal>
         </>
+        <Header />
         <Container className="mt-1">
           <Row>
             <Col lg="8">
@@ -175,42 +177,53 @@ class ShowGroup extends Component {
                 <Card.Body>
                   <Card.Title as="h5">
                     Members:
-                    {this.state.data.members.map((val) => (
-                      <Button
-                        variant="secondary"
-                        className="rounded-pill fs-6"
-                        size="sm"
-                      >
-                        {val}
-                      </Button>
-                    ))}
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip id="button-tooltip-2">Add Expense</Tooltip>
-                      }
-                    >
-                      <Button
-                        variant="primary"
-                        className="float-end rounded-pill"
-                        onClick={() => this.setState({ lgShow: true })}
-                      >
-                        <IoMdListBox fontSize="1.5em" className="mb-1" />
-                      </Button>
-                    </OverlayTrigger>
-                    <OverlayTrigger
-                      placement="bottom"
-                      overlay={
-                        <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
-                      }
-                    >
-                      <Button
-                        variant="danger"
-                        className="float-end rounded-pill"
-                      >
-                        <MdDelete fontSize="1.5em" className="mb-1" />
-                      </Button>
-                    </OverlayTrigger>
+                    <Container>
+                      <Row>
+                        <Col lg="9">
+                          {this.state.data.members.map((val) => (
+                            <Button
+                              variant="secondary"
+                              className="rounded-pill fs-6"
+                              size="sm"
+                            >
+                              {val}
+                            </Button>
+                          ))}
+                        </Col>
+                        <Col>
+                          <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                              <Tooltip id="button-tooltip-2">
+                                Add Expense
+                              </Tooltip>
+                            }
+                          >
+                            <Button
+                              variant="primary"
+                              className="float-end rounded-pill"
+                              onClick={() => this.setState({ lgShow: true })}
+                            >
+                              <IoMdListBox fontSize="1.5em" className="mb-1" />{" "}
+                            </Button>
+                          </OverlayTrigger>
+
+                          <OverlayTrigger
+                            placement="bottom"
+                            overlay={
+                              <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
+                            }
+                          >
+                            <Button
+                              variant="danger"
+                              className="float-end rounded-pill"
+                            >
+                              <MdDelete fontSize="1.5em" className="mb-1" />{" "}
+                            </Button>
+                          </OverlayTrigger>
+                        </Col>
+                      </Row>
+                    </Container>
                   </Card.Title>
                   <Card.Title>Debts:</Card.Title>
                   <Card.Text>{debt_str}</Card.Text>
@@ -313,7 +326,6 @@ class ShowGroup extends Component {
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
-              {console.log(this.state.chartHeader)}
               {this.state.chartHeader["navChartItem"] === "weekly" ? (
                 <div>
                   <Bar

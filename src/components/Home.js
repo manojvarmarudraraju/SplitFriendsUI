@@ -1,43 +1,36 @@
-import React, { Component, useEffect, useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
-import GroupComponent from "./GroupComponent";
-import Data from "./data/groupdata.json";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from 'react-router';
-import { getAllGroups } from '../redux/actions/group';
-import { clearMessage } from '../redux/actions/message'
+import { Navigate } from "react-router";
+import { getAllGroups } from "../redux/actions/group";
+import { clearMessage } from "../redux/actions/message";
+import HomePage from "./HomePage";
 
 const Home = (props) => {
-
   const [isGetDataSuccess, setIsGetDataSuccess] = useState(false);
   const [isAPICalled, setIsAPICalled] = useState(false);
 
-  const { isLoggedIn } = useSelector(state => state.auth);
-  const { message } = useSelector(state => state.message);
-  const { groups } = useSelector(state => state.group);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.message);
+  const { groups } = useSelector((state) => state.group);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(clearMessage())
+    dispatch(clearMessage());
     if (isAPICalled) {
-      return
+      return;
     }
-    setIsAPICalled(true)
+    setIsAPICalled(true);
     dispatch(getAllGroups())
-    .then(() => {
-      setIsGetDataSuccess(true);
-    })
-    .catch((e) => {
-      setIsGetDataSuccess(false);
-      setIsAPICalled(false);
-    });
+      .then(() => {
+        setIsGetDataSuccess(true);
+      })
+      .catch((e) => {
+        setIsGetDataSuccess(false);
+        setIsAPICalled(false);
+      });
   }, []);
-
-  useEffect(() => {
-    
-  });
 
   if (!isLoggedIn) {
     return <Navigate to="/login" />;
@@ -46,20 +39,10 @@ const Home = (props) => {
   return (
     <>
       <Header />
-      <Container>
-        <Row>
-          <Col></Col>
-          <Col lg="10">
-            {isGetDataSuccess && groups && (
-              groups.map((value) => {
-                return <GroupComponent data={value} />;
-              }))}
-          </Col>
-          <Col></Col>
-        </Row>
-      </Container>
+
+      {isGetDataSuccess && groups && <HomePage Data={groups} />}
     </>
   );
-}
+};
 
 export default Home;

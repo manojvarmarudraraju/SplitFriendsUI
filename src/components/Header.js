@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router";
 import { IoMdAdd } from "react-icons/io";
 import { addGroup } from "../redux/actions/group";
-import { clearMessage } from '../redux/actions/message'
+import { clearMessage } from "../redux/actions/message";
 import { Link } from "react-router-dom";
 
 const Header = (props) => {
@@ -42,10 +42,10 @@ const Header = (props) => {
   const handleClose = () => {
     setShow(false);
     window.location.reload();
-    setFilteredMmeber(members)
-    setSelectedMember([])
-    setSearchMember("")
-    setGroupName("")
+    setFilteredMmeber(members);
+    setSelectedMember([]);
+    setSearchMember("");
+    setGroupName("");
     setLoading(false);
   };
 
@@ -245,7 +245,7 @@ const Header = (props) => {
       <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
           <Navbar.Brand href="/home" id="navBrand">
-          Splitwith Friends
+            Splitwith Friends
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -269,7 +269,7 @@ const Header = (props) => {
             <Nav>
               <Nav.Link id="navItem1">
                 <FaUserAlt style={{ marginBottom: "3px", padding: "0.5px" }} />{" "}
-                Abijith
+                {user.displayName}
               </Nav.Link>
               <Nav.Link href="/login" id="navItem1" onClick={logOut}>
                 <HiOutlineLogout

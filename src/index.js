@@ -25,7 +25,7 @@ ReactDOM.render(
       <PersistGate loading={null} persistor={persistor}>
         <Router>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Signup />} />
           <Route path="/GroupComponent" element={<GroupComponent />} />
