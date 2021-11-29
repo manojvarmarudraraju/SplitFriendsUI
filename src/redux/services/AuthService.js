@@ -3,25 +3,24 @@ import AuthHeader from "./AuthHeader";
 
 const API_URL = "http://localhost:8080/";
 
-const USER_URL = API_URL + "user/"
-const GROUP_URL = API_URL + "group/"
+const USER_URL = API_URL + "user/";
+const GROUP_URL = API_URL + "group/";
+const ACTIVITY_URL = API_URL + "activity/";
 
 const register = (obj) => {
   return axios.put(USER_URL + "register", obj);
 };
 
 const login = (obj) => {
-  return axios
-    .post(USER_URL + "login", obj)
-    .then((response) => {
-      if (response.data.token) {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-      }
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-      }
-      return response.data;
-    });
+  return axios.post(USER_URL + "login", obj).then((response) => {
+    if (response.data.token) {
+      localStorage.setItem("token", JSON.stringify(response.data.token));
+    }
+    if (response.data.user) {
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+    }
+    return response.data;
+  });
 };
 
 const logout = () => {
@@ -29,6 +28,7 @@ const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("member");
   localStorage.removeItem("groups");
+  localStorage.removeItem("activity");
 };
 
 const addGroup = (obj) => {
@@ -37,10 +37,23 @@ const addGroup = (obj) => {
 
 const getAllGroups = () => {
   return axios
-  .get(GROUP_URL + "data", { headers: AuthHeader() })
-  .then((response) => {
+    .get(GROUP_URL + "data", { headers: AuthHeader() })
+    .then((response) => {
+      if (response.data) {
+        localStorage.setItem("groups", JSON.stringify(response.data));
+      }
+      return response.data;
+    });
+};
+
+const getActivity = () => {
+  return axios.get(ACTIVITY_URL, { headers: AuthHeader() }).then((response) => {
+    console.log(response);
     if (response.data) {
-      localStorage.setItem("groups", JSON.stringify(response.data));
+      localStorage.setItem(
+        "activity",
+        JSON.stringify(response.data.result.activities)
+      );
     }
     return response.data;
   });
@@ -52,4 +65,5 @@ export default {
   logout,
   addGroup,
   getAllGroups,
+  getActivity,
 };
