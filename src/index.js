@@ -17,6 +17,7 @@ import "mdbreact/dist/css/mdb.css";
 import { Provider } from 'react-redux'
 import {store, persistor }from './store'
 import { PersistGate } from 'redux-persist/integration/react'
+import AddExpenseParams from "./components/AddExpenseParams";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,12 +25,12 @@ ReactDOM.render(
       <PersistGate loading={null} persistor={persistor}>
         <Router>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Signup />} />
           <Route path="/GroupComponent" element={<GroupComponent />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/AddExpense" element={<AddExpense />} />
+          <Route path="/AddExpense/:id" element={<AddExpenseParams />} />
           <Route path="/Activity" element={<Activity />} />
           <Route path="/ShowGroup" element={<ShowGroup />} />
           </Routes>

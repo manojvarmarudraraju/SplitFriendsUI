@@ -1,10 +1,11 @@
-import {
-  GROUP_ADD_FAILURE,
-  GROUP_ADD_SUCCESS,
-  GROUP_GET_SUCCESS,
-  GROUP_GET_FAILURE,
-  SET_MESSAGE,
-} from "./types";
+import { GROUP_ADD_FAILURE, 
+    GROUP_ADD_SUCCESS, 
+    GROUP_GET_SUCCESS,
+    GROUP_GET_FAILURE,
+    SET_MESSAGE,
+    ADD_EXP_SUCCESS,
+    ADD_EXP_FAILURE,
+ } from "./types";
 
 import AuthService from "../services/AuthService";
 
@@ -52,3 +53,27 @@ export const getAllGroups = () => (dispatch) => {
     }
   );
 };
+
+
+export const addExpense = (id, obj) => (dispatch) => {
+    return AuthService.addExpense(id, obj).then(
+        (response) => {
+            dispatch({
+                type: ADD_EXP_SUCCESS,
+            });
+            return Promise.resolve();
+        },
+        (error) => {
+            dispatch({
+                type: ADD_EXP_FAILURE,
+            });
+            dispatch({
+                type: SET_MESSAGE,
+                payload: "Something went wrong.",
+
+            });
+            return Promise.reject();
+        }
+    );
+};
+
