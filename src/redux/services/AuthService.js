@@ -46,10 +46,19 @@ const getAllGroups = () => {
   });
 };
 
+const addExpense = (groupId, obj) => {
+  return axios
+  .put(GROUP_URL + "expense/"+groupId+"/", obj, { headers: AuthHeader() })
+  .then((response) => {
+    return response.data;
+  });
+};
+
 export default {
   register,
   login,
   logout,
   addGroup,
   getAllGroups,
+  addExpense,
 };
