@@ -14,8 +14,8 @@ import { FaEye } from "react-icons/fa";
 const GroupComponent = (props) => {
   const { data } = props;
   var debt_str = "";
-  Object.keys(data.debts).forEach((val) => {
-    debt_str += val.toString() + ":" + data.debts[val].toString() + ", ";
+  Object.keys(data.debts.debts).forEach((val) => {
+    debt_str += val.toString() + ":" + data.debts.debts[val].toString() + ", ";
   });
   debt_str = debt_str.slice(0, -2);
 
@@ -57,7 +57,7 @@ const GroupComponent = (props) => {
       </Card.Header>
       <Card.Body>
         <div>
-          {Object.keys(data.debts).length === 0 ? (
+          {Object.keys(data.debts.debts).length === 0 ? (
             <>
               <Card.Title> Debts: </Card.Title>
               <Card.Text>You are clean</Card.Text>
