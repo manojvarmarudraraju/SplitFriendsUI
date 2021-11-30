@@ -5,6 +5,8 @@ import { GROUP_ADD_FAILURE,
     SET_MESSAGE,
     ADD_EXP_SUCCESS,
     ADD_EXP_FAILURE,
+    SINGLE_GROUP_GET_SUCCESS,
+    SINGLE_GROUP_GET_FAILURE,
  } from "./types";
 
 import AuthService from "../services/AuthService";
@@ -75,5 +77,29 @@ export const addExpense = (id, obj) => (dispatch) => {
             return Promise.reject();
         }
     );
+};
+
+export const getSingleGroups = (groupId) => (dispatch) => {
+  return AuthService.getSingleGroup(groupId).then(
+    (response) => {
+      dispatch({
+        type: SINGLE_GROUP_GET_SUCCESS,
+        payload: {
+          groupSingle: response,
+        },
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: SINGLE_GROUP_GET_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
 };
 

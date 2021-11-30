@@ -63,12 +63,19 @@ export const login = (obj) => (dispatch) => {
                 return Promise.reject();
             }
             const new_members = data.user.users.filter((item) => item._id !== data.user.user._id)
+            const idUserMap = {}
+            data.user.users.map((item) => {
+                idUserMap[item._id] = item.displayName
+            })
+            idUserMap[data.user.user._id] = data.user.user.displayName
+            console.log(idUserMap);
             dispatch({
                 type: LOGIN_SUCCESS,
                 payload: {
                     members: new_members,
                     user: data.user.user,
                     token: data.token,
+                    idUserMap: idUserMap,
                 },
             });
 

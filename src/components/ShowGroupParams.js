@@ -6,6 +6,6 @@ export default (props) => (
     <ShowGroup
         {...props}
         dispatch = {useDispatch()}
-        params={useParams()}
+        params={useParams()} 
     />
 );

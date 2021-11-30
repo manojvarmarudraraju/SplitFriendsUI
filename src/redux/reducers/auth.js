@@ -12,7 +12,9 @@ import {
 
   const members = JSON.parse(localStorage.getItem("members"));
 
-  const initialState = (user && token && members) ? { isLoggedIn: true, user, token, members } : { isLoggedIn: false, user: null, token: null, members: null };
+  const idUserMap = {}
+
+  const initialState = (user && token && members) ? { isLoggedIn: true, user, token, members, idUserMap } : { isLoggedIn: false, user: null, token: null, members: null, idUserMap: null };
 
   export default function (state = initialState, action) {
     const { type, payload } = action;
@@ -35,7 +37,7 @@ import {
           members: payload.members,
           user: payload.user,
           token: payload.token,
-
+          idUserMap: payload.idUserMap,
         };
       case LOGIN_FAIL:
         return {
@@ -44,7 +46,7 @@ import {
           isLoggedIn: false,
           user: null,
           token: null,
-
+          idUserMap: null,
         };
       case LOGOUT:
         return {
@@ -53,6 +55,7 @@ import {
           members: null,
           user: null,
           token: null,
+          idUserMap: null,
         };
       default:
         return state;
