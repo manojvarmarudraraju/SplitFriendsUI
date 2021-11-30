@@ -8,8 +8,10 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
+import { archiveGroup } from "../redux/actions/group";
 
 const GroupComponent = (props) => {
   const { data } = props;
@@ -18,6 +20,16 @@ const GroupComponent = (props) => {
     debt_str += val.toString() + ":" + data.debts.debts[val].toString() + ", ";
   });
   debt_str = debt_str.slice(0, -2);
+
+  const dispatch = useDispatch();
+
+  const handleArchive = () => {
+    dispatch(archiveGroup(data._id))
+      .then(window.location.reload())
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <Card
@@ -35,6 +47,7 @@ const GroupComponent = (props) => {
               >
                 <Button
                   variant="primary"
+                  disabled={data.is_archived}
                   className="rounded-pill border border-1 "
                 >
                   <FaEye fontSize="1.4em" />
@@ -46,6 +59,8 @@ const GroupComponent = (props) => {
               >
                 <Button
                   variant="danger"
+                  onClick={handleArchive}
+                  disabled={data.is_archived}
                   className="rounded-pill border border-1"
                 >
                   <RiDeleteBin5Fill fontSize="1.4em" />
