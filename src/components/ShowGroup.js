@@ -55,7 +55,6 @@ class ShowGroup extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps)
     this.setState({
       groupSingle: nextProps.groupSingle,
     });
@@ -63,7 +62,6 @@ class ShowGroup extends Component {
 
   handleBorrowerName = (val) => {
     const {idUserMap} = this.state
-    console.log(idUserMap)
     let names = [];
     val.division.map(function(d, idx){
       let name = idUserMap[d.borrower];
@@ -84,7 +82,7 @@ class ShowGroup extends Component {
     this.setState({...this.state, isAPICalled: true, isAPISuccess: false})
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
-    .then((response) => {
+    .then(() => {
       this.setState({...this.state, isAPICalled: false, isAPISuccess: true})
     })
     .catch(() => {
