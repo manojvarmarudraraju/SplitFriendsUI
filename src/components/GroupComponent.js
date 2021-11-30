@@ -10,6 +10,8 @@ import {
 } from "react-bootstrap";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
+import { Navigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const GroupComponent = (props) => {
   const { data } = props;
@@ -33,12 +35,14 @@ const GroupComponent = (props) => {
                 placement="bottom"
                 overlay={<Tooltip id="button-tooltip-2">View</Tooltip>}
               >
+                <Link to={"/ShowGroup/"+data._id}>
                 <Button
                   variant="primary"
-                  className="rounded-pill border border-1 "
+                  className="rounded-pill border border-1" 
                 >
                   <FaEye fontSize="1.4em" />
                 </Button>
+                </Link>
               </OverlayTrigger>
               <OverlayTrigger
                 placement="bottom"

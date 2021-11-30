@@ -8,9 +8,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import GroupComponent from "./components/GroupComponent";
 import Home from "./components/Home";
-import AddExpense from "./components/AddExpense";
 import Activity from "./components/activity";
-import ShowGroup from "./components/ShowGroup";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
@@ -18,6 +16,7 @@ import { Provider } from 'react-redux'
 import {store, persistor }from './store'
 import { PersistGate } from 'redux-persist/integration/react'
 import AddExpenseParams from "./components/AddExpenseParams";
+import ShowGroupParams from "./components/ShowGroupParams";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -32,7 +31,7 @@ ReactDOM.render(
           <Route path="/home" element={<Home />} />
           <Route path="/AddExpense/:id" element={<AddExpenseParams />} />
           <Route path="/Activity" element={<Activity />} />
-          <Route path="/ShowGroup" element={<ShowGroup />} />
+          <Route path="/ShowGroup/:id" element={<ShowGroupParams />} />
           </Routes>
         </Router>
       </PersistGate>

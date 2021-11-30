@@ -32,6 +32,7 @@ class ShowGroup extends Component {
       SplitName: { formHorizontalRadios: "equal" },
       chartHeader: { navChartItem: "weekly" },
       amountValue: "",
+      id: this.props.params.id,
     };
   }
   handleClose = () => this.setState({ lgShow: false });
