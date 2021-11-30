@@ -73,6 +73,14 @@ const archiveGroup = (groupId, obj) => {
   });
 };
 
+const getSingleGroup = (groupId) => {
+  return axios
+  .get(GROUP_URL +groupId, { headers: AuthHeader() })
+  .then((response) => {
+    return response.data;
+  });
+}
+
 export default {
   register,
   login,
@@ -81,5 +89,6 @@ export default {
   getAllGroups,
   addExpense,
   getActivity,
+  getSingleGroup,
   archiveGroup,
 };

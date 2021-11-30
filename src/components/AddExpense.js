@@ -12,7 +12,7 @@ class AddExpense extends Component {
       lgShow: false,
       SplitName: { formHorizontalRadios: "equal" },
       totalAmount: "",
-      members: this.props.members,
+      members: [this.props.user, ...this.props.members],
       tempMembers: this.props.members,
       user: this.props.user,
       selectedMembers: [],
@@ -55,7 +55,7 @@ class AddExpense extends Component {
     obj["division"] = []
     if (this.state.SplitName.formHorizontalRadios === "equal") {
       this.state.selectedMembers.map((item) => {
-        item.amountValue = (this.state.totalAmount * 1)/(this.state.selectedMembers.length + 1);
+        item.amountValue = (this.state.totalAmount * 1)/(this.state.selectedMembers.length);
         let division = {
           lender: this.state.user._id,
           borrower: item._id,

@@ -11,6 +11,8 @@ import {
 import { useDispatch } from "react-redux";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaEye } from "react-icons/fa";
+import { Navigate } from "react-router";
+import { Link } from "react-router-dom";
 import { archiveGroup } from "../redux/actions/group";
 
 const GroupComponent = (props) => {
@@ -45,6 +47,7 @@ const GroupComponent = (props) => {
                 placement="bottom"
                 overlay={<Tooltip id="button-tooltip-2">View</Tooltip>}
               >
+                <Link to={"/ShowGroup/"+data._id}>
                 <Button
                   variant="primary"
                   disabled={data.is_archived}
@@ -52,6 +55,7 @@ const GroupComponent = (props) => {
                 >
                   <FaEye fontSize="1.4em" />
                 </Button>
+                </Link>
               </OverlayTrigger>
               <OverlayTrigger
                 placement="bottom"

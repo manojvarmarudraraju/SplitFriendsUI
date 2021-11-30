@@ -20,6 +20,10 @@ import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
 import Chart from "chart.js/auto";
+import { clearMessage } from "../redux/actions/message";
+import { getSingleGroups } from "../redux/actions/group";
+import { connect } from "react-redux";
+import { login } from "../redux/actions/auth";
 
 class ShowGroup extends Component {
   constructor(props) {
@@ -32,8 +36,44 @@ class ShowGroup extends Component {
       SplitName: { formHorizontalRadios: "equal" },
       chartHeader: { navChartItem: "weekly" },
       amountValue: "",
+      id: this.props.params.id,
+      groupSingle: this.props.groupSingle,
+      members: this.props.members,
+      user: this.props.user,
+      idUserMap: this.props.idUserMap,
     };
+    this.clearMessage = this.clearMessage.bind(this);
+    this.getGroupData = this.getGroupData.bind(this);
+    this.handleBorrowerName = this.handleBorrowerName.bind(this);
+    this.clearMessage();
+    this.getGroupData();
   }
+
+  handleBorrowerName = (val) => {
+    const {idUserMap} = this.state
+    console.log(idUserMap)
+    let names = [];
+    val.division.map(function(d, idx){
+      let name = idUserMap[d.borrower];
+      names.push(name);
+    })
+    return <>{names.join(", ")}</>;
+  }
+
+  clearMessage = () => {
+    const { dispatch } = this.props;
+    dispatch(clearMessage());
+  }
+
+  getGroupData = () => {
+    const { dispatch } = this.props;
+    dispatch(getSingleGroups(this.state.id))
+    .then(() => {
+    })
+    .catch(() => {
+    });
+  }
+
   handleClose = () => this.setState({ lgShow: false });
   handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,9 +100,9 @@ class ShowGroup extends Component {
   };
   render() {
     var debt_str = "";
-    Object.keys(this.state.data.debts).forEach((val) => {
+    Object.keys(this.state.groupSingle.debts.debts).forEach((val) => {
       debt_str +=
-        val.toString() + ":" + this.state.data.debts[val].toString() + "$, ";
+        this.state.idUserMap[val] + ": $" + this.state.groupSingle.debts.debts[val].toString() + ", ";
     });
     debt_str = debt_str.slice(0, -2);
     return (
@@ -173,20 +213,20 @@ class ShowGroup extends Component {
           <Row>
             <Col lg="8">
               <Card>
-                <Card.Header as="h5">Group Name</Card.Header>
+                <Card.Header as="h5">{this.state.groupSingle.data.name}</Card.Header>
                 <Card.Body>
                   <Card.Title as="h5">
                     Members:
                     <Container>
                       <Row>
                         <Col lg="9">
-                          {this.state.data.members.map((val) => (
+                          {this.state.groupSingle.data.members.map((val) => (
                             <Button
                               variant="secondary"
                               className="rounded-pill fs-6"
                               size="sm"
                             >
-                              {val}
+                              {this.state.idUserMap[val]}
                             </Button>
                           ))}
                         </Col>
@@ -229,16 +269,18 @@ class ShowGroup extends Component {
                   <Card.Text>{debt_str}</Card.Text>
                 </Card.Body>
               </Card>
+              {this.state.groupSingle.data.expenses.length > 0 && 
+                  
               <Row className="m-1">
                 <Card>
                   <Card.Header as="h5">Expenses</Card.Header>
-                  {this.state.activity.map((val) => (
+                  {this.state.groupSingle.data.expenses.map((val) => (
                     <Card className="mt-1">
                       <Card.Header as="h5">
                         <Container>
                           <Row>
                             <Col className="d-flex align-items-center">
-                              Walmart
+                              {val.name}
                             </Col>
                             <Col className="d-flex justify-content-end">
                               <OverlayTrigger
@@ -286,13 +328,14 @@ class ShowGroup extends Component {
                             <Col>
                               <div className="mx-2 float-end">
                                 <Card.Title>Details:</Card.Title>
-                                <Card.Text>Lender: Manoj</Card.Text>
+                                <Card.Text>Lender: {this.state.idUserMap[val.division[0].lender]}</Card.Text>
                                 <Card.Text>
-                                  Borrower: [Abijith, Harsh]
+                                  Borrower: 
+                                  {this.handleBorrowerName(val)}
                                 </Card.Text>
-                                <Card.Text>Original Amount: $70.00</Card.Text>
-                                <Card.Text>Total Amount: $40.00</Card.Text>
-                                <Card.Text>Date: 11-27-2021 22:45</Card.Text>
+                                <Card.Text>Original Amount: ${val.ori_amount}</Card.Text>
+                                <Card.Text>Total Amount: ${val.amount}</Card.Text>
+                                <Card.Text>Date: {val.date+" "+new Date(val.timestamp).getHours()+":"+new Date(val.timestamp).getMinutes()+":"+new Date(val.timestamp).getSeconds()}</Card.Text>
                               </div>
                             </Col>
                           </Row>
@@ -301,8 +344,10 @@ class ShowGroup extends Component {
                     </Card>
                   ))}
                 </Card>
-              </Row>
+              </Row>}
+
             </Col>
+            {this.state.groupSingle.data.expenses.length > 0 && 
             <Col className="mt-5">
               <Nav justify variant="pills" defaultActiveKey="home">
                 <Nav.Item>
@@ -401,7 +446,7 @@ class ShowGroup extends Component {
                   />
                 </div>
               )}
-            </Col>
+            </Col>}
           </Row>
         </Container>
       </>
@@ -409,4 +454,12 @@ class ShowGroup extends Component {
   }
 }
 
-export default ShowGroup;
+const mapStateToProps = state => ({
+  members: state.auth.members,
+  user: state.auth.user,
+  message: state.message.message,
+  groupSingle: state.group.groupSingle,
+  idUserMap: state.auth.idUserMap,
+});
+
+export default connect(mapStateToProps, { login, getSingleGroups })(ShowGroup);
