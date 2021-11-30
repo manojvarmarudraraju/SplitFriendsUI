@@ -6,8 +6,9 @@
   "members": ["Abi", "Manoj", "Harsh"],
   "admin": "619b8febb77400a34d2db054",
   "debts": {
-    "Abijith": -40,
+    "Abijith": 0,
     "Subash": 50,
-    "Nandan": 70
+    "Nandan": 70,
+    "Abi": -50
   }
 }
