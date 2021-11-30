@@ -41,6 +41,8 @@ class ShowGroup extends Component {
       members: this.props.members,
       user: this.props.user,
       idUserMap: this.props.idUserMap,
+      isAPICalled: false,
+      isAPISuccess: false,
     };
     this.clearMessage = this.clearMessage.bind(this);
     this.getGroupData = this.getGroupData.bind(this);
@@ -66,11 +68,17 @@ class ShowGroup extends Component {
   }
 
   getGroupData = () => {
+    if(this.state.isAPICalled) {
+      return 
+    }
+    this.setState({...this.state, isAPICalled: true, isAPISuccess: false})
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
     .then(() => {
+      this.setState({...this.state, isAPICalled: false, isAPISuccess: true})
     })
     .catch(() => {
+      this.setState({...this.state, isAPICalled: false, isAPISuccess: false})
     });
   }
 
@@ -105,6 +113,9 @@ class ShowGroup extends Component {
         this.state.idUserMap[val] + ": $" + this.state.groupSingle.debts.debts[val].toString() + ", ";
     });
     debt_str = debt_str.slice(0, -2);
+    if(debt_str === "") {
+      debt_str = "No debts to show."
+    }
     return (
       <>
         <>
