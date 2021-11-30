@@ -10,6 +10,8 @@ import {
   OverlayTrigger,
   Tooltip,
   Nav,
+  Dropdown,
+  DropdownButton,
 } from "react-bootstrap";
 import Header from "./Header";
 import { IoMdListBox } from "react-icons/io";
@@ -33,9 +35,14 @@ class ShowGroup extends Component {
       activity: GActivity,
       addExp: false,
       lgShow: false,
+      cshow: false,
       SplitName: { formHorizontalRadios: "equal" },
       chartHeader: { navChartItem: "weekly" },
       amountValue: "",
+      weeklyHeaders: [],
+      weeklyAmount: [],
+      montlyHealders: [],
+      monthlyAmount: [],
       id: this.props.params.id,
       groupSingle: this.props.groupSingle,
       members: this.props.members,
@@ -52,37 +59,46 @@ class ShowGroup extends Component {
   }
 
   handleBorrowerName = (val) => {
-    const {idUserMap} = this.state
-    console.log(idUserMap)
+    const { idUserMap } = this.state;
+    console.log(idUserMap);
     let names = [];
-    val.division.map(function(d, idx){
+    val.division.map(function (d, idx) {
       let name = idUserMap[d.borrower];
       names.push(name);
-    })
+    });
     return <>{names.join(", ")}</>;
-  }
+  };
 
   clearMessage = () => {
     const { dispatch } = this.props;
     dispatch(clearMessage());
-  }
+  };
 
   getGroupData = () => {
-    if(this.state.isAPICalled) {
-      return 
+    if (this.state.isAPICalled) {
+      return;
     }
-    this.setState({...this.state, isAPICalled: true, isAPISuccess: false})
+    this.setState({ ...this.state, isAPICalled: true, isAPISuccess: false });
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
-    .then(() => {
-      this.setState({...this.state, isAPICalled: false, isAPISuccess: true})
-    })
-    .catch(() => {
-      this.setState({...this.state, isAPICalled: false, isAPISuccess: false})
-    });
-  }
+      .then(() => {
+        this.setState({
+          ...this.state,
+          isAPICalled: false,
+          isAPISuccess: true,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          ...this.state,
+          isAPICalled: false,
+          isAPISuccess: false,
+        });
+      });
+  };
 
   handleClose = () => this.setState({ lgShow: false });
+  handleDebtsClose = () => this.setState({ cshow: false });
   handleChange = (e) => {
     const { name, value } = e.target;
     this.setState({
@@ -110,11 +126,14 @@ class ShowGroup extends Component {
     var debt_str = "";
     Object.keys(this.state.groupSingle.debts.debts).forEach((val) => {
       debt_str +=
-        this.state.idUserMap[val] + ": $" + this.state.groupSingle.debts.debts[val].toString() + ", ";
+        this.state.idUserMap[val] +
+        ": $" +
+        this.state.groupSingle.debts.debts[val].toString() +
+        ", ";
     });
     debt_str = debt_str.slice(0, -2);
-    if(debt_str === "") {
-      debt_str = "No debts to show."
+    if (debt_str === "") {
+      debt_str = "No debts to show.";
     }
     return (
       <>
@@ -219,12 +238,79 @@ class ShowGroup extends Component {
             </Modal.Footer>
           </Modal>
         </>
+        <>
+          <Modal
+            show={this.state.cshow}
+            onHide={this.handleDebtsClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Clear Debts</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Container>
+                <Row>
+                  <Col>Group Name:</Col>
+                  <Col className="text-uppercase">{Data.name}</Col>
+                </Row>
+                <Row className="mt-2">
+                  <Col className="float-start">
+                    <DropdownButton
+                      id="dropdown-basic-button"
+                      title="Members"
+                      className="rounded-pill"
+                    >
+                      {Object.keys(Data.debts).length !== 0 &&
+                        Object.keys(Data.debts)
+                          .filter((val) => Data.debts[val] < 0)
+                          .map((value, index) => (
+                            <>
+                              <Dropdown.Item key={index}>
+                                {value} ({Data.debts[value]}$){" "}
+                              </Dropdown.Item>
+                              <hr />
+                            </>
+                          ))}
+                    </DropdownButton>
+                  </Col>
+                  <Col>
+                    <input
+                      id={1}
+                      type="text"
+                      name="number"
+                      placeholder="$0.00"
+                      className="m-2"
+                    />
+                  </Col>
+                </Row>
+              </Container>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="danger"
+                onClick={this.handleDebtsClose}
+                className="rounded rounded-pill"
+              >
+                Close
+              </Button>
+              <Button
+                variant="success"
+                className="rounded rounded-pill text-black"
+              >
+                Submit
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
         <Header />
         <Container className="mt-1">
           <Row>
             <Col lg="8">
               <Card>
-                <Card.Header as="h5">{this.state.groupSingle.data.name}</Card.Header>
+                <Card.Header as="h5">
+                  {this.state.groupSingle.data.name}
+                </Card.Header>
                 <Card.Body>
                   <Card.Title as="h5">
                     Members:
@@ -268,6 +354,7 @@ class ShowGroup extends Component {
                             <Button
                               variant="danger"
                               className="float-end rounded-pill"
+                              onClick={() => this.setState({ cshow: true })}
                             >
                               <MdDelete fontSize="1.5em" className="mb-1" />{" "}
                             </Button>
@@ -280,184 +367,215 @@ class ShowGroup extends Component {
                   <Card.Text>{debt_str}</Card.Text>
                 </Card.Body>
               </Card>
-              {this.state.groupSingle.data.expenses.length > 0 && 
-                  
-              <Row className="m-1">
-                <Card>
-                  <Card.Header as="h5">Expenses</Card.Header>
-                  {this.state.groupSingle.data.expenses.map((val) => (
-                    <Card className="mt-1">
-                      <Card.Header as="h5">
-                        <Container>
-                          <Row>
-                            <Col className="d-flex align-items-center">
-                              {val.name}
-                            </Col>
-                            <Col className="d-flex justify-content-end">
-                              <OverlayTrigger
-                                placement="bottom"
-                                overlay={
-                                  <Tooltip id="button-tooltip-2">Edit</Tooltip>
-                                }
-                              >
-                                <div className="m-1 ">
-                                  <RiPencilFill
-                                    fontSize="1.5em"
-                                    color="darkblue"
-                                  />
+              {this.state.groupSingle.data.expenses.length > 0 && (
+                <Row className="m-1">
+                  <Card>
+                    <Card.Header as="h5">Expenses</Card.Header>
+                    {this.state.groupSingle.data.expenses.map((val) => (
+                      <Card className="mt-1">
+                        <Card.Header as="h5">
+                          <Container>
+                            <Row>
+                              <Col className="d-flex align-items-center">
+                                {val.name}
+                              </Col>
+                              <Col className="d-flex justify-content-end">
+                                <OverlayTrigger
+                                  placement="bottom"
+                                  overlay={
+                                    <Tooltip id="button-tooltip-2">
+                                      Edit
+                                    </Tooltip>
+                                  }
+                                >
+                                  <div className="m-1 ">
+                                    <RiPencilFill
+                                      fontSize="1.5em"
+                                      color="darkblue"
+                                    />
+                                  </div>
+                                </OverlayTrigger>
+                                <OverlayTrigger
+                                  placement="bottom"
+                                  overlay={
+                                    <Tooltip id="button-tooltip-2">
+                                      Archive
+                                    </Tooltip>
+                                  }
+                                >
+                                  <div className="m-1">
+                                    <RiDeleteBin5Fill
+                                      fontSize="1.5em"
+                                      color="red"
+                                    />
+                                  </div>
+                                </OverlayTrigger>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </Card.Header>
+                        <Card.Body>
+                          <Container>
+                            <Row>
+                              <Col className="d-flex align-items-top">
+                                <Card.Img
+                                  src={Walmart}
+                                  alt="Walmart.png"
+                                  className="w-25 h-100"
+                                />
+                              </Col>
+                              <Col>
+                                <div className="mx-2 float-end">
+                                  <Card.Title>Details:</Card.Title>
+                                  <Card.Text>
+                                    Lender:{" "}
+                                    {
+                                      this.state.idUserMap[
+                                        val.division[0].lender
+                                      ]
+                                    }
+                                  </Card.Text>
+                                  <Card.Text>
+                                    Borrower:
+                                    {this.handleBorrowerName(val)}
+                                  </Card.Text>
+                                  <Card.Text>
+                                    Original Amount: ${val.ori_amount}
+                                  </Card.Text>
+                                  <Card.Text>
+                                    Total Amount: ${val.amount}
+                                  </Card.Text>
+                                  <Card.Text>
+                                    Date:{" "}
+                                    {val.date +
+                                      " " +
+                                      new Date(val.timestamp).getHours() +
+                                      ":" +
+                                      new Date(val.timestamp).getMinutes() +
+                                      ":" +
+                                      new Date(val.timestamp).getSeconds()}
+                                  </Card.Text>
                                 </div>
-                              </OverlayTrigger>
-                              <OverlayTrigger
-                                placement="bottom"
-                                overlay={
-                                  <Tooltip id="button-tooltip-2">
-                                    Archive
-                                  </Tooltip>
-                                }
-                              >
-                                <div className="m-1">
-                                  <RiDeleteBin5Fill
-                                    fontSize="1.5em"
-                                    color="red"
-                                  />
-                                </div>
-                              </OverlayTrigger>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </Card.Header>
-                      <Card.Body>
-                        <Container>
-                          <Row>
-                            <Col className="d-flex align-items-top">
-                              <Card.Img
-                                src={Walmart}
-                                alt="Walmart.png"
-                                className="w-25 h-100"
-                              />
-                            </Col>
-                            <Col>
-                              <div className="mx-2 float-end">
-                                <Card.Title>Details:</Card.Title>
-                                <Card.Text>Lender: {this.state.idUserMap[val.division[0].lender]}</Card.Text>
-                                <Card.Text>
-                                  Borrower: 
-                                  {this.handleBorrowerName(val)}
-                                </Card.Text>
-                                <Card.Text>Original Amount: ${val.ori_amount}</Card.Text>
-                                <Card.Text>Total Amount: ${val.amount}</Card.Text>
-                                <Card.Text>Date: {val.date+" "+new Date(val.timestamp).getHours()+":"+new Date(val.timestamp).getMinutes()+":"+new Date(val.timestamp).getSeconds()}</Card.Text>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </Card.Body>
-                    </Card>
-                  ))}
-                </Card>
-              </Row>}
-
-            </Col>
-            {this.state.groupSingle.data.expenses.length > 0 && 
-            <Col className="mt-5">
-              <Nav justify variant="pills" defaultActiveKey="home">
-                <Nav.Item>
-                  <Nav.Link
-                    eventKey="home"
-                    name="navChartItem"
-                    id="weekly"
-                    onClick={this.handleNav}
-                  >
-                    Weekly
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link
-                    eventKey="link-1"
-                    name="navChartItem"
-                    id="monthly"
-                    onClick={this.handleNav}
-                  >
-                    Monthly
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-              {this.state.chartHeader["navChartItem"] === "weekly" ? (
-                <div>
-                  <Bar
-                    data={{
-                      labels: ["January", "February", "March", "April", "May"],
-                      datasets: [
-                        {
-                          label: "Expenses",
-                          fill: true,
-                          backgroundColor: "blue",
-                          borderColor: "rgba(0,0,0,1)",
-                          borderWidth: 1,
-                          data: [65, 59, 80, 81, 56],
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsive: true,
-                      plugins: {
-                        title: {
-                          display: true,
-                          text: "Expenses per month",
-                          fontSize: 10,
-                        },
-                        legend: {
-                          display: true,
-                          position: "bottom",
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <Pie
-                    data={{
-                      labels: ["January", "February", "March", "April", "May"],
-                      datasets: [
-                        {
-                          label: "Rainfall",
-                          backgroundColor: [
-                            "#B21F00",
-                            "#C9DE00",
-                            "#2FDE00",
-                            "#00A6B4",
-                            "#6800B4",
-                          ],
-                          hoverBackgroundColor: [
-                            "#501800",
-                            "#4B5000",
-                            "#175000",
-                            "#003350",
-                            "#35014F",
-                          ],
-                          data: [65, 59, 80, 81, 56, 65, 59, 80, 81, 56],
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsive: true,
-                      plugins: {
-                        title: {
-                          display: true,
-                          text: "Expenses per month",
-                          fontSize: 10,
-                        },
-                        legend: {
-                          display: true,
-                          position: "bottom",
-                        },
-                      },
-                    }}
-                  />
-                </div>
+                              </Col>
+                            </Row>
+                          </Container>
+                        </Card.Body>
+                      </Card>
+                    ))}
+                  </Card>
+                </Row>
               )}
-            </Col>}
+            </Col>
+            {this.state.groupSingle.data.expenses.length > 0 && (
+              <Col className="mt-5">
+                <Nav justify variant="pills" defaultActiveKey="home">
+                  <Nav.Item>
+                    <Nav.Link
+                      eventKey="home"
+                      name="navChartItem"
+                      id="weekly"
+                      onClick={this.handleNav}
+                    >
+                      Weekly
+                    </Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link
+                      eventKey="link-1"
+                      name="navChartItem"
+                      id="monthly"
+                      onClick={this.handleNav}
+                    >
+                      Monthly
+                    </Nav.Link>
+                  </Nav.Item>
+                </Nav>
+                {Object.keys(this.state.groupSingle.debts.weekExp).map((val) =>
+                  this.state.weeklyHeaders.push(this.state.idUserMap[val])
+                )}
+                {this.state.chartHeader["navChartItem"] === "weekly" ? (
+                  <div>
+                    <Bar
+                      data={{
+                        labels: this.state.weeklyHeaders,
+                        datasets: [
+                          {
+                            label: "Expenses",
+                            fill: true,
+                            backgroundColor: "blue",
+                            borderColor: "rgba(0,0,0,1)",
+                            borderWidth: 1,
+                            data: [65, 59, 80, 81, 56],
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: "Expenses per month",
+                            fontSize: 10,
+                          },
+                          legend: {
+                            display: true,
+                            position: "bottom",
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <Pie
+                      data={{
+                        labels: [
+                          "January",
+                          "February",
+                          "March",
+                          "April",
+                          "May",
+                        ],
+                        datasets: [
+                          {
+                            label: "Rainfall",
+                            backgroundColor: [
+                              "#B21F00",
+                              "#C9DE00",
+                              "#2FDE00",
+                              "#00A6B4",
+                              "#6800B4",
+                            ],
+                            hoverBackgroundColor: [
+                              "#501800",
+                              "#4B5000",
+                              "#175000",
+                              "#003350",
+                              "#35014F",
+                            ],
+                            data: [65, 59, 80, 81, 56, 65, 59, 80, 81, 56],
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        plugins: {
+                          title: {
+                            display: true,
+                            text: "Expenses per month",
+                            fontSize: 10,
+                          },
+                          legend: {
+                            display: true,
+                            position: "bottom",
+                          },
+                        },
+                      }}
+                    />
+                  </div>
+                )}
+              </Col>
+            )}
           </Row>
         </Container>
       </>
@@ -465,7 +583,7 @@ class ShowGroup extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   members: state.auth.members,
   user: state.auth.user,
   message: state.message.message,
