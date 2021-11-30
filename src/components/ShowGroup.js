@@ -64,6 +64,8 @@ class ShowGroup extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       groupSingle: nextProps.groupSingle,
+      weeklyHeaders: nextProps.weeklyHeaders,
+      weeklyAmount: nextProps.weeklyAmount,
     });
   }
 
@@ -90,11 +92,20 @@ class ShowGroup extends Component {
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
       .then(() => {
+        const newWHeaders = []
+        const newWAmount = []
+        Object.keys(this.state.groupSingle.debts.weekExp).map((val) => {
+          newWHeaders.push(this.state.idUserMap[val])
+          newWAmount.push(this.state.groupSingle.debts.weekExp[val])
+        })
+        console.log(this.state.weeklyHeaders);
         this.setState({
-          ...this.state,
-          isAPICalled: false,
-          isAPISuccess: true,
-        });
+            ...this.state,
+            isAPICalled: false,
+            isAPISuccess: true,
+            weeklyHeaders: newWHeaders,
+            weeklyAmount: newWAmount
+          });
       })
       .catch(() => {
         this.setState({
@@ -498,9 +509,6 @@ class ShowGroup extends Component {
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
-                {Object.keys(this.state.groupSingle.debts.weekExp).map((val) =>
-                  this.state.weeklyHeaders.push(this.state.idUserMap[val])
-                )}
                 {this.state.chartHeader["navChartItem"] === "weekly" ? (
                   <div>
                     <Bar
@@ -513,7 +521,7 @@ class ShowGroup extends Component {
                             backgroundColor: "blue",
                             borderColor: "rgba(0,0,0,1)",
                             borderWidth: 1,
-                            data: [65, 59, 80, 81, 56],
+                            data: this.state.weeklyAmount,
                           },
                         ],
                       }}
