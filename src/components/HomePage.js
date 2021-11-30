@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import Header from "./Header";
 import GroupComponent from "./GroupComponent";
 import ReactPaginate from "react-paginate";
 import "./styles/Home.css";

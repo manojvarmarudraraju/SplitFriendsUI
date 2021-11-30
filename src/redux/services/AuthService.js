@@ -61,9 +61,15 @@ const getActivity = () => {
 
 const addExpense = (groupId, obj) => {
   return axios
-  .put(GROUP_URL + "expense/"+groupId+"/", obj, { headers: AuthHeader() })
-  .then((response) => {
-    return response.data;
+    .put(GROUP_URL + "expense/" + groupId + "/", obj, { headers: AuthHeader() })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const archiveGroup = (groupId, obj) => {
+  return axios.delete(GROUP_URL + groupId + "/", {
+    headers: AuthHeader(),
   });
 };
 
@@ -84,4 +90,5 @@ export default {
   addExpense,
   getActivity,
   getSingleGroup,
+  archiveGroup,
 };
