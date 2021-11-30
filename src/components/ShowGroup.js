@@ -55,12 +55,20 @@ class ShowGroup extends Component {
     this.getGroupData = this.getGroupData.bind(this);
     this.handleBorrowerName = this.handleBorrowerName.bind(this);
     this.clearMessage();
+  }
+
+  componentDidMount() {
     this.getGroupData();
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      groupSingle: nextProps.groupSingle,
+    });
+  }
+
   handleBorrowerName = (val) => {
-    const { idUserMap } = this.state;
-    console.log(idUserMap);
+    const {idUserMap} = this.state
     let names = [];
     val.division.map(function (d, idx) {
       let name = idUserMap[d.borrower];
