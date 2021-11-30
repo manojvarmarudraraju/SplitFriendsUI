@@ -9,12 +9,13 @@ import Signup from "./components/Signup";
 import GroupComponent from "./components/GroupComponent";
 import Home from "./components/Home";
 import Activity from "./components/activity";
+import Cleardebt from "./components/cleardebt";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
-import { Provider } from 'react-redux'
-import {store, persistor }from './store'
-import { PersistGate } from 'redux-persist/integration/react'
+import { Provider } from "react-redux";
+import { store, persistor } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
 import AddExpenseParams from "./components/AddExpenseParams";
 import ShowGroupParams from "./components/ShowGroupParams";
 
@@ -25,18 +26,18 @@ ReactDOM.render(
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Signup />} />
-          <Route path="/GroupComponent" element={<GroupComponent />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/AddExpense/:id" element={<AddExpenseParams />} />
-          <Route path="/Activity" element={<Activity />} />
-          <Route path="/ShowGroup/:id" element={<ShowGroupParams />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Signup />} />
+            <Route path="/GroupComponent" element={<GroupComponent />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/AddExpense/:id" element={<AddExpenseParams />} />
+            <Route path="/Activity" element={<Activity />} />
+            <Route path="/ShowGroup/:id" element={<ShowGroupParams />} />
+            <Route path="/Cleardebt" element={<Cleardebt />} />
           </Routes>
         </Router>
       </PersistGate>
     </Provider>
-
   </React.StrictMode>,
   document.getElementById("root")
 );
