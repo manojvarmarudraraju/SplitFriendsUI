@@ -48,7 +48,17 @@ class ShowGroup extends Component {
     this.getGroupData = this.getGroupData.bind(this);
     this.handleBorrowerName = this.handleBorrowerName.bind(this);
     this.clearMessage();
+  }
+
+  componentDidMount() {
     this.getGroupData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps)
+    this.setState({
+      groupSingle: nextProps.groupSingle,
+    });
   }
 
   handleBorrowerName = (val) => {
@@ -74,7 +84,7 @@ class ShowGroup extends Component {
     this.setState({...this.state, isAPICalled: true, isAPISuccess: false})
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
-    .then(() => {
+    .then((response) => {
       this.setState({...this.state, isAPICalled: false, isAPISuccess: true})
     })
     .catch(() => {
