@@ -67,19 +67,29 @@ const addExpense = (groupId, obj) => {
     });
 };
 
+const archiveExpense = (groupId, expenseId, obj) => {
+  return axios.delete(
+    GROUP_URL + groupId + "/expense/" + expenseId + "/",
+    obj,
+    {
+      headers: AuthHeader(),
+    }
+  );
+};
+
 const archiveGroup = (groupId, obj) => {
-  return axios.delete(GROUP_URL + groupId + "/", {
+  return axios.put(GROUP_URL + groupId, obj, {
     headers: AuthHeader(),
   });
 };
 
 const getSingleGroup = (groupId) => {
   return axios
-  .get(GROUP_URL +groupId, { headers: AuthHeader() })
-  .then((response) => {
-    return response.data;
-  });
-}
+    .get(GROUP_URL + groupId, { headers: AuthHeader() })
+    .then((response) => {
+      return response.data;
+    });
+};
 
 export default {
   register,
@@ -91,4 +101,5 @@ export default {
   getActivity,
   getSingleGroup,
   archiveGroup,
+  archiveExpense,
 };

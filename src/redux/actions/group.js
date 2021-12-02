@@ -1,15 +1,18 @@
-import { GROUP_ADD_FAILURE, 
-    GROUP_ADD_SUCCESS, 
-    GROUP_GET_SUCCESS,
-    GROUP_GET_FAILURE,
-    SET_MESSAGE,
-    ADD_EXP_SUCCESS,
-    ADD_EXP_FAILURE,
-    SINGLE_GROUP_GET_SUCCESS,
-    SINGLE_GROUP_GET_FAILURE,
-    ARCH_GROUP_SUCCESS,
+import {
+  GROUP_ADD_FAILURE,
+  GROUP_ADD_SUCCESS,
+  GROUP_GET_SUCCESS,
+  GROUP_GET_FAILURE,
+  SET_MESSAGE,
+  ADD_EXP_SUCCESS,
+  ADD_EXP_FAILURE,
+  SINGLE_GROUP_GET_SUCCESS,
+  SINGLE_GROUP_GET_FAILURE,
+  ARCH_GROUP_SUCCESS,
   ARCH_GROUP_FAILURE,
- } from "./types";
+  ARCH_EXP_SUCCESS,
+  ARCH_EXP_FAILURE,
+} from "./types";
 
 import AuthService from "../services/AuthService";
 
@@ -103,8 +106,8 @@ export const getSingleGroups = (groupId) => (dispatch) => {
   );
 };
 
-export const archiveGroup = (id) => (dispatch) => {
-  return AuthService.archiveGroup(id).then(
+export const archiveGroup = (id, obj) => (dispatch) => {
+  return AuthService.archiveGroup(id, obj).then(
     (response) => {
       dispatch({
         type: ARCH_GROUP_SUCCESS,
@@ -124,3 +127,23 @@ export const archiveGroup = (id) => (dispatch) => {
   );
 };
 
+export const archiveExpense = (id1, id2) => (dispatch) => {
+  return AuthService.archiveExpense(id1, id2).then(
+    (response) => {
+      dispatch({
+        type: ARCH_EXP_SUCCESS,
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: ARCH_EXP_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
+};
