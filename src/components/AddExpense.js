@@ -233,7 +233,7 @@ class AddExpense extends Component {
                         />
                       </div>
                     ))
-                  : this.state.tempMembers.map((val, index) => (
+                  : this.state.members.map((val, index) => (
                       <div key={index} className="mb-3">
                         <label>{val.displayName}</label>
                         <input

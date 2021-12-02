@@ -237,7 +237,10 @@ class ShowGroup extends Component {
     window.location.reload();
   };
   
-  handleDebtsClose = () => this.setState({ cshow: false });
+  handleDebtsClose = () => {
+    this.setState({ cshow: false });
+    window.location.reload();
+  }
   
   handleNav = (e) => {
     const { name, id } = e.target;
@@ -347,7 +350,7 @@ class ShowGroup extends Component {
               <Form.Label>Members: </Form.Label>
               <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
                 {this.state.SplitName["formHorizontalRadios"] === "equal"
-                  ? this.state.members.map((val, index) => (
+                  ? this.state.tempMembers.map((val, index) => (
                       <div key={index} className="mb-3">
                         <Form.Check
                           inline
