@@ -14,12 +14,16 @@ import { FaEye } from "react-icons/fa";
 import { Navigate } from "react-router";
 import { Link } from "react-router-dom";
 import { archiveGroup } from "../redux/actions/group";
+import { useSelector } from "react-redux";
 
 const GroupComponent = (props) => {
   const { data } = props;
+
+  const {idUserMap} = useSelector(state => state.auth);
+
   var debt_str = "";
   Object.keys(data.debts.debts).forEach((val) => {
-    debt_str += val.toString() + ":" + data.debts.debts[val].toString() + ", ";
+    debt_str += idUserMap[val].toString() + ":" + data.debts.debts[val].toString() + ", ";
   });
   debt_str = debt_str.slice(0, -2);
 
