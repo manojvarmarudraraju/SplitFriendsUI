@@ -91,6 +91,14 @@ const getSingleGroup = (groupId) => {
     });
 };
 
+const clearDebts = (groupId, obj) => {
+  return axios
+    .post(GROUP_URL + groupId + "/settle", obj, { headers: AuthHeader() })
+    .then((response) => {
+      return response.data;
+    });
+};
+
 export default {
   register,
   login,

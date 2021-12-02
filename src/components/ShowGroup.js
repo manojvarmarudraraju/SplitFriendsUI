@@ -57,6 +57,9 @@ class ShowGroup extends Component {
       selectedMembers: [],
       name: "",
       totalAmount: "",
+      clearDebtSelectedMember: "",
+      clearDebtSelectedMemberAmount: "",
+      isClearAllDebt: false,
     };
     this.clearMessage = this.clearMessage.bind(this);
     this.getGroupData = this.getGroupData.bind(this);
@@ -65,10 +68,11 @@ class ShowGroup extends Component {
     this.handleAmount = this.handleAmount.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
     this.clearMessage();
+    this.getGroupData();
   }
 
   componentDidMount() {
-    this.getGroupData();
+    //this.getGroupData();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -241,6 +245,18 @@ class ShowGroup extends Component {
     this.setState({ cshow: false });
     window.location.reload();
   }
+
+  handleDebtsSubmit = () => {
+    if (this.state.clearDebtSelectedMember === "" || this.state.clearDebtSelectedMemberAmount * 1 === 0) {
+      alert("Please fill in all the details!");
+      return
+    }
+    if (this.state.clearDebtSelectedMemberAmount * 1  > Math.abs(this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) || 
+      this.state.clearDebtSelectedMemberAmount * 1  < 0){
+      alert("Please enter valid amount to clear your debt.");
+      return
+    }
+  }
   
   handleNav = (e) => {
     const { name, id } = e.target;
@@ -288,6 +304,25 @@ class ShowGroup extends Component {
         this.setState({selectedMembers: array});
       }
     }
+  };
+
+  onClearDebtMemberSelected = (e) => {
+    this.setState({
+      clearDebtSelectedMember: e,
+      clearDebtSelectedMemberAmount: Math.abs(this.state.groupSingle.debts.debts[e]),
+      isClearAllDebt: true,
+    })
+  }
+
+  handleClearDebtAmount = (evt) => {
+    let temp = false;
+      if(evt.target.value * 1 === this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) {
+        temp = true;
+      }
+      this.setState({
+        clearDebtSelectedMemberAmount: evt.target.value * 1,
+        isClearAllDebt: temp,
+      });
   };
 
   render() {
@@ -417,7 +452,7 @@ class ShowGroup extends Component {
               <Container>
                 <Row>
                   <Col>Group Name:</Col>
-                  <Col className="text-uppercase">{Data.name}</Col>
+                  <Col className="text-uppercase">{this.state.groupSingle.data.name}</Col>
                 </Row>
                 <Row className="mt-2">
                   <Col className="float-start">
@@ -425,14 +460,15 @@ class ShowGroup extends Component {
                       id="dropdown-basic-button"
                       title="Members"
                       className="rounded-pill"
+                      onSelect={this.onClearDebtMemberSelected}
                     >
-                      {Object.keys(Data.debts).length !== 0 &&
-                        Object.keys(Data.debts)
-                          .filter((val) => Data.debts[val] < 0)
+                      {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
+                        Object.keys(this.state.groupSingle.debts.debts)
+                          .filter((val) => this.state.groupSingle.debts.debts[val] < 0)
                           .map((value, index) => (
                             <>
-                              <Dropdown.Item key={index}>
-                                {value} ({Data.debts[value]}$){" "}
+                              <Dropdown.Item key={index} eventKey={value}>
+                                {this.state.idUserMap[value]} ({this.state.groupSingle.debts.debts[value]}$){" "}
                               </Dropdown.Item>
                               <hr />
                             </>
@@ -442,10 +478,12 @@ class ShowGroup extends Component {
                   <Col>
                     <input
                       id={1}
-                      type="text"
+                      type="number"
                       name="number"
                       placeholder="$0.00"
                       className="m-2"
+                      onChange={(event) => this.handleClearDebtAmount(event)}
+                      value={this.state.clearDebtSelectedMemberAmount}
                     />
                   </Col>
                 </Row>
@@ -462,6 +500,7 @@ class ShowGroup extends Component {
               <Button
                 variant="success"
                 className="rounded rounded-pill text-black"
+                onClick={this.handleDebtsSubmit}
               >
                 Submit
               </Button>

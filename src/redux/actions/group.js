@@ -12,6 +12,8 @@ import {
   ARCH_GROUP_FAILURE,
   ARCH_EXP_SUCCESS,
   ARCH_EXP_FAILURE,
+  CLEAR_DEBTS_SUCCESS,
+  CLEAR_DEBTS_FAILURE,
 } from "./types";
 
 import AuthService from "../services/AuthService";
@@ -138,6 +140,30 @@ export const archiveExpense = (id1, id2) => (dispatch) => {
     (error) => {
       dispatch({
         type: ARCH_EXP_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
+};
+
+export const clearDebts = (groupId, obj) => (dispatch) => {
+  return AuthService.clearDebts(groupId, obj).then(
+    (response) => {
+      dispatch({
+        type: CLEAR_DEBTS_SUCCESS,
+        payload: {
+          groupSingle: response,
+        },
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: CLEAR_DEBTS_FAILURE,
       });
       dispatch({
         type: SET_MESSAGE,
