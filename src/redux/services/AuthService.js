@@ -99,6 +99,12 @@ const clearDebts = (groupId, obj) => {
     });
 };
 
+const deleteExpense = (groupId, expenseId, obj) => {
+  return axios.delete(GROUP_URL + groupId + "/expense/" + expenseId, obj, {
+    headers: AuthHeader(),
+  });
+};
+
 export default {
   register,
   login,
@@ -110,5 +116,6 @@ export default {
   getSingleGroup,
   archiveGroup,
   archiveExpense,
-  clearDebts
+  clearDebts,
+  deleteExpense
 };

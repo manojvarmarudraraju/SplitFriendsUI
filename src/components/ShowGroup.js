@@ -24,7 +24,7 @@ import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import { clearMessage } from "../redux/actions/message";
-import { getSingleGroups } from "../redux/actions/group";
+import { deleteExpense, getSingleGroups } from "../redux/actions/group";
 import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
@@ -325,6 +325,19 @@ class ShowGroup extends Component {
       });
   };
 
+  deleteExpense = (expenseId, expenseName) => {
+    const { dispatch } = this.props
+    const obj = {}
+    obj["groupName"] = this.state.groupSingle.data.name
+    obj["expanseName"] = expenseName
+    dispatch(deleteExpense(this.state.id, expenseId, obj))
+    .then(() => {
+      window.location.reload();
+    })
+    .catch(() => {
+    });
+  }
+
   render() {
     return (
       <>
@@ -611,6 +624,7 @@ class ShowGroup extends Component {
                                     <RiDeleteBin5Fill
                                       fontSize="1.5em"
                                       color="red"
+                                      onClick={() => this.deleteExpense(val._id, val.name)}
                                     />
                                   </div>
                                 </OverlayTrigger>

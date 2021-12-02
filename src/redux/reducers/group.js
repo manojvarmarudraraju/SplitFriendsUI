@@ -14,6 +14,8 @@ import {
   ARCH_EXP_FAILURE,
   CLEAR_DEBTS_FAILURE,
   CLEAR_DEBTS_SUCCESS,
+  DELETE_EXPENSE_SUCCESS,
+  DELETE_EXPENSE_FAILURE,
 } from "../actions/types";
 
 const groups = JSON.parse(localStorage.getItem("groups"));
@@ -85,6 +87,14 @@ export default function (state = initialState, action) {
         ...state,
       };
     case CLEAR_DEBTS_SUCCESS:
+      return {
+        ...state,
+      };
+    case DELETE_EXPENSE_SUCCESS:
+      return {
+        ...state,
+      };
+    case DELETE_EXPENSE_FAILURE:
       return {
         ...state,
       };
