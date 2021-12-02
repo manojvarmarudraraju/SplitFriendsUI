@@ -41,8 +41,9 @@ class ShowGroup extends Component {
       amountValue: "",
       weeklyHeaders: [],
       weeklyAmount: [],
-      montlyHealders: [],
+      monthlyHeaders: [],
       monthlyAmount: [],
+      debt_str1: "",
       id: this.props.params.id,
       groupSingle: this.props.groupSingle,
       members: this.props.members,
@@ -66,11 +67,14 @@ class ShowGroup extends Component {
       groupSingle: nextProps.groupSingle,
       weeklyHeaders: nextProps.weeklyHeaders,
       weeklyAmount: nextProps.weeklyAmount,
+      monthlyHeaders: nextProps.monthlyHeaders,
+      monthlyAmount: nextProps.monthlyAmount,
+      debt_str1: nextProps.debt_str1,
     });
   }
 
   handleBorrowerName = (val) => {
-    const {idUserMap} = this.state
+    const { idUserMap } = this.state;
     let names = [];
     val.division.map(function (d, idx) {
       let name = idUserMap[d.borrower];
@@ -92,20 +96,40 @@ class ShowGroup extends Component {
     const { dispatch } = this.props;
     dispatch(getSingleGroups(this.state.id))
       .then(() => {
-        const newWHeaders = []
-        const newWAmount = []
+        const newWHeaders = [];
+        const newWAmount = [];
+        const newMHeaders = [];
+        const newMAmount = [];
+        var debt_str = "";
         Object.keys(this.state.groupSingle.debts.weekExp).map((val) => {
-          newWHeaders.push(this.state.idUserMap[val])
-          newWAmount.push(this.state.groupSingle.debts.weekExp[val])
-        })
-        console.log(this.state.weeklyHeaders);
+          newWHeaders.push(this.state.idUserMap[val]);
+          newWAmount.push(this.state.groupSingle.debts.weekExp[val]);
+        });
+        Object.keys(this.state.groupSingle.debts.monthExp).map((val) => {
+          newMHeaders.push(this.state.idUserMap[val]);
+          newMAmount.push(this.state.groupSingle.debts.monthExp[val]);
+        });
+        Object.keys(this.state.groupSingle.debts.debts).forEach((val) => {
+          debt_str +=
+            this.state.idUserMap[val] +
+            ": $" +
+            this.state.groupSingle.debts.debts[val].toString() +
+            ", ";
+        });
+        debt_str = debt_str.slice(0, -2);
+        if (debt_str === "") {
+          debt_str = "No debts to show.";
+        }
         this.setState({
-            ...this.state,
-            isAPICalled: false,
-            isAPISuccess: true,
-            weeklyHeaders: newWHeaders,
-            weeklyAmount: newWAmount
-          });
+          ...this.state,
+          isAPICalled: false,
+          isAPISuccess: true,
+          weeklyHeaders: newWHeaders,
+          weeklyAmount: newWAmount,
+          monthlyHeaders: newMHeaders,
+          monthlyAmount: newMAmount,
+          debt_str1: debt_str,
+        });
       })
       .catch(() => {
         this.setState({
@@ -142,18 +166,6 @@ class ShowGroup extends Component {
     this.setState({ amountValue: amountValue });
   };
   render() {
-    var debt_str = "";
-    Object.keys(this.state.groupSingle.debts.debts).forEach((val) => {
-      debt_str +=
-        this.state.idUserMap[val] +
-        ": $" +
-        this.state.groupSingle.debts.debts[val].toString() +
-        ", ";
-    });
-    debt_str = debt_str.slice(0, -2);
-    if (debt_str === "") {
-      debt_str = "No debts to show.";
-    }
     return (
       <>
         <>
@@ -383,7 +395,7 @@ class ShowGroup extends Component {
                     </Container>
                   </Card.Title>
                   <Card.Title>Debts:</Card.Title>
-                  <Card.Text>{debt_str}</Card.Text>
+                  <Card.Text>{this.state.debt_str1}</Card.Text>
                 </Card.Body>
               </Card>
               {this.state.groupSingle.data.expenses.length > 0 && (
@@ -455,8 +467,7 @@ class ShowGroup extends Component {
                                     }
                                   </Card.Text>
                                   <Card.Text>
-                                    Borrower:
-                                    {this.handleBorrowerName(val)}
+                                    Borrower: {this.handleBorrowerName(val)}
                                   </Card.Text>
                                   <Card.Text>
                                     Original Amount: ${val.ori_amount}
@@ -516,7 +527,7 @@ class ShowGroup extends Component {
                         labels: this.state.weeklyHeaders,
                         datasets: [
                           {
-                            label: "Expenses",
+                            label: "Users",
                             fill: true,
                             backgroundColor: "blue",
                             borderColor: "rgba(0,0,0,1)",
@@ -530,7 +541,7 @@ class ShowGroup extends Component {
                         plugins: {
                           title: {
                             display: true,
-                            text: "Expenses per month",
+                            text: "Expenses of users for last week",
                             fontSize: 10,
                           },
                           legend: {
@@ -545,16 +556,10 @@ class ShowGroup extends Component {
                   <div>
                     <Pie
                       data={{
-                        labels: [
-                          "January",
-                          "February",
-                          "March",
-                          "April",
-                          "May",
-                        ],
+                        labels: this.state.monthlyHeaders,
                         datasets: [
                           {
-                            label: "Rainfall",
+                            label: "Users",
                             backgroundColor: [
                               "#B21F00",
                               "#C9DE00",
@@ -569,7 +574,7 @@ class ShowGroup extends Component {
                               "#003350",
                               "#35014F",
                             ],
-                            data: [65, 59, 80, 81, 56, 65, 59, 80, 81, 56],
+                            data: this.state.monthlyAmount,
                           },
                         ],
                       }}
@@ -578,7 +583,7 @@ class ShowGroup extends Component {
                         plugins: {
                           title: {
                             display: true,
-                            text: "Expenses per month",
+                            text: "Expenses of users per month",
                             fontSize: 10,
                           },
                           legend: {

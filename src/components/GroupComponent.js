@@ -26,7 +26,10 @@ const GroupComponent = (props) => {
   const dispatch = useDispatch();
 
   const handleArchive = () => {
-    dispatch(archiveGroup(data._id))
+    var obj = {};
+    obj["groupName"] = data.name;
+    console.log(obj);
+    dispatch(archiveGroup(data._id, obj))
       .then(window.location.reload())
       .catch((error) => {
         console.log(error);
@@ -47,14 +50,14 @@ const GroupComponent = (props) => {
                 placement="bottom"
                 overlay={<Tooltip id="button-tooltip-2">View</Tooltip>}
               >
-                <Link to={"/ShowGroup/"+data._id}>
-                <Button
-                  variant="primary"
-                  disabled={data.is_archived}
-                  className="rounded-pill border border-1 "
-                >
-                  <FaEye fontSize="1.4em" />
-                </Button>
+                <Link to={"/ShowGroup/" + data._id}>
+                  <Button
+                    variant="primary"
+                    disabled={data.is_archived}
+                    className="rounded-pill border border-1 "
+                  >
+                    <FaEye fontSize="1.4em" />
+                  </Button>
                 </Link>
               </OverlayTrigger>
               <OverlayTrigger
