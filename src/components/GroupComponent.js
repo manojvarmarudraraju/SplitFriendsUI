@@ -26,14 +26,20 @@ const GroupComponent = (props) => {
   const dispatch = useDispatch();
 
   const handleArchive = () => {
-    var obj = {};
-    obj["groupName"] = data.name;
-    console.log(obj);
-    dispatch(archiveGroup(data._id, obj))
-      .then(window.location.reload())
-      .catch((error) => {
-        console.log(error);
-      });
+    if (Object.keys(data.debts.debts).length !== 0) {
+      alert(
+        "There are some unclear debts in this group. Please clear it before deleting..."
+      );
+    } else {
+      var obj = {};
+      obj["groupName"] = data.name;
+      console.log(obj);
+      dispatch(archiveGroup(data._id, obj))
+        .then(console.log("called"))
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
