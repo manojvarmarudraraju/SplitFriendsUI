@@ -24,7 +24,7 @@ import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import { clearMessage } from "../redux/actions/message";
-import { getSingleGroups } from "../redux/actions/group";
+import { deleteExpense, getSingleGroups } from "../redux/actions/group";
 import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
@@ -58,6 +58,9 @@ class ShowGroup extends Component {
       selectedMembers: [],
       name: "",
       totalAmount: "",
+      clearDebtSelectedMember: "",
+      clearDebtSelectedMemberAmount: "",
+      isClearAllDebt: false,
     };
     this.clearMessage = this.clearMessage.bind(this);
     this.getGroupData = this.getGroupData.bind(this);
@@ -239,8 +242,20 @@ class ShowGroup extends Component {
   handleDebtsClose = () => {
     this.setState({ cshow: false });
     window.location.reload();
-  };
+  }
 
+  handleDebtsSubmit = () => {
+    if (this.state.clearDebtSelectedMember === "" || this.state.clearDebtSelectedMemberAmount * 1 === 0) {
+      alert("Please fill in all the details!");
+      return
+    }
+    if (this.state.clearDebtSelectedMemberAmount * 1  > Math.abs(this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) || 
+      this.state.clearDebtSelectedMemberAmount * 1  < 0){
+      alert("Please enter valid amount to clear your debt.");
+      return
+    }
+  }
+  
   handleNav = (e) => {
     const { name, id } = e.target;
     this.setState({
@@ -289,6 +304,7 @@ class ShowGroup extends Component {
     }
   };
 
+
   archiveExpense = (gId, eId, gName, eName) => {
     const { dispatch } = this.props;
     var obj = {};
@@ -299,6 +315,25 @@ class ShowGroup extends Component {
       .then(console.log(obj))
       .catch((error) => {
         console.log(error);
+      });
+  };
+
+  onClearDebtMemberSelected = (e) => {
+    this.setState({
+      clearDebtSelectedMember: e,
+      clearDebtSelectedMemberAmount: Math.abs(this.state.groupSingle.debts.debts[e]),
+      isClearAllDebt: true,
+    })
+  }
+
+  handleClearDebtAmount = (evt) => {
+    let temp = false;
+      if(evt.target.value * 1 === this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) {
+        temp = true;
+      }
+      this.setState({
+        clearDebtSelectedMemberAmount: evt.target.value * 1,
+        isClearAllDebt: temp,
       });
   };
 
@@ -445,7 +480,7 @@ class ShowGroup extends Component {
               <Container>
                 <Row>
                   <Col>Group Name:</Col>
-                  <Col className="text-uppercase">{Data.name}</Col>
+                  <Col className="text-uppercase">{this.state.groupSingle.data.name}</Col>
                 </Row>
                 <Row className="mt-2">
                   <Col className="float-start">
@@ -453,14 +488,15 @@ class ShowGroup extends Component {
                       id="dropdown-basic-button"
                       title="Members"
                       className="rounded-pill"
+                      onSelect={this.onClearDebtMemberSelected}
                     >
-                      {Object.keys(Data.debts).length !== 0 &&
-                        Object.keys(Data.debts)
-                          .filter((val) => Data.debts[val] < 0)
+                      {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
+                        Object.keys(this.state.groupSingle.debts.debts)
+                          .filter((val) => this.state.groupSingle.debts.debts[val] < 0)
                           .map((value, index) => (
                             <>
-                              <Dropdown.Item key={index}>
-                                {value} ({Data.debts[value]}$){" "}
+                              <Dropdown.Item key={index} eventKey={value}>
+                                {this.state.idUserMap[value]} ({this.state.groupSingle.debts.debts[value]}$){" "}
                               </Dropdown.Item>
                               <hr />
                             </>
@@ -470,10 +506,12 @@ class ShowGroup extends Component {
                   <Col>
                     <input
                       id={1}
-                      type="text"
+                      type="number"
                       name="number"
                       placeholder="$0.00"
                       className="m-2"
+                      onChange={(event) => this.handleClearDebtAmount(event)}
+                      value={this.state.clearDebtSelectedMemberAmount}
                     />
                   </Col>
                 </Row>
@@ -490,6 +528,7 @@ class ShowGroup extends Component {
               <Button
                 variant="success"
                 className="rounded rounded-pill text-black"
+                onClick={this.handleDebtsSubmit}
               >
                 Submit
               </Button>
@@ -599,6 +638,7 @@ class ShowGroup extends Component {
                                     </Tooltip>
                                   }
                                 >
+
                                   <Button
                                     className="m-1 rounded"
                                     variant="danger"
@@ -614,6 +654,7 @@ class ShowGroup extends Component {
                                   >
                                     <RiDeleteBin5Fill fontSize="1.5em" />
                                   </Button>
+
                                 </OverlayTrigger>
                               </Col>
                             </Row>

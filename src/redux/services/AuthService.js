@@ -87,6 +87,20 @@ const getSingleGroup = (groupId) => {
     });
 };
 
+const clearDebts = (groupId, obj) => {
+  return axios
+    .post(GROUP_URL + groupId + "/settle", obj, { headers: AuthHeader() })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const deleteExpense = (groupId, expenseId, obj) => {
+  return axios.delete(GROUP_URL + groupId + "/expense/" + expenseId, obj, {
+    headers: AuthHeader(),
+  });
+};
+
 export default {
   register,
   login,
@@ -98,4 +112,6 @@ export default {
   getSingleGroup,
   archiveGroup,
   archiveExpense,
+  clearDebts,
+  deleteExpense
 };
