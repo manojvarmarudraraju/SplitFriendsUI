@@ -12,12 +12,23 @@ class HomeFinal extends Component {
       data: [],
       perPage: 4,
       currentPage: 0,
+      archived: [],
+      nonArchived: [],
     };
+
     this.handlePageClick = this.handlePageClick.bind(this);
+    this.props.Data.map((val) => {
+      if (val.is_archived) {
+        console.log(val);
+        this.state.archived.push(val);
+      } else {
+        this.state.nonArchived.push(val);
+      }
+    });
   }
 
   receivedData() {
-    const data = this.props.Data;
+    const data = this.state.nonArchived.concat(this.state.archived);
     const slice = data.slice(
       this.state.offset,
       this.state.offset + this.state.perPage
