@@ -19,6 +19,7 @@ import { IoMdListBox } from "react-icons/io";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
 import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import { FcMoneyTransfer } from 'react-icons/fc';
 import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
@@ -50,11 +51,12 @@ class ShowGroup extends Component {
       id: this.props.params.id,
       groupSingle: this.props.groupSingle,
       members: this.props.members,
+      allMembers: [this.props.user, ...this.props.members],
       user: this.props.user,
       idUserMap: this.props.idUserMap,
       isAPICalled: false,
       isAPISuccess: false,
-      tempMembers: [this.props.user, ...this.props.members],
+      tempMembers: [],
       selectedMembers: [],
       name: "",
       totalAmount: "",
@@ -91,9 +93,11 @@ class ShowGroup extends Component {
     }
     if (this.state.SplitName.formHorizontalRadios !== "equal") {
       let total = 0;
-      this.state.members.map((item) => {
+      this.state.allMembers.map((item) => {
         total += item.amountValue * 1;
       });
+      console.log(total);
+      console.log(this.state.totalAmount);
       if (total !== this.state.totalAmount * 1) {
         alert("Please fill appropriate amount for distribution!");
         return;
@@ -117,7 +121,7 @@ class ShowGroup extends Component {
         obj["division"].push(division);
       });
     } else {
-      this.state.members.map((item) => {
+      this.state.allMembers.map((item) => {
         if (item.amountValue != 0) {
           let division = {
             lender: this.state.user._id,
@@ -129,7 +133,6 @@ class ShowGroup extends Component {
       });
     }
     obj["amount"] = this.state.totalAmount * 1;
-    console.log(obj);
     const { dispatch } = this.props;
     dispatch(addExpense(this.state.id, obj))
       .then(() => {
@@ -144,14 +147,14 @@ class ShowGroup extends Component {
 
   handleChange = (e) => {
     const { name, value } = e.target;
-    this.state.members.map((item) => {
+    this.state.allMembers.map((item) => {
       item.amountValue = "";
     });
     this.setState({
       SplitName: {
         [name]: value,
       },
-      members: this.state.members,
+      allMembers: this.state.allMembers
     });
   };
 
@@ -159,7 +162,7 @@ class ShowGroup extends Component {
     const { idUserMap } = this.state;
     let names = [];
     val.division.map(function (d, idx) {
-      let name = idUserMap[d.borrower];
+      let name = idUserMap[d.borrower] + "($" + Math.round(Math.abs(d.amount * 1 + Number.EPSILON) * 100)/100 + ")";
       names.push(name);
     });
     return <>{names.join(", ")}</>;
@@ -195,13 +198,14 @@ class ShowGroup extends Component {
           debt_str +=
             this.state.idUserMap[val] +
             ": $" +
-            this.state.groupSingle.debts.debts[val].toString() +
+            Math.round((this.state.groupSingle.debts.debts[val] * 1 + Number.EPSILON)*100)/100 +
             ", ";
         });
         debt_str = debt_str.slice(0, -2);
         if (debt_str === "") {
           debt_str = "No debts to show.";
         }
+        const tempMembers = this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id))
         this.setState({
           ...this.state,
           isAPICalled: false,
@@ -211,6 +215,7 @@ class ShowGroup extends Component {
           monthlyHeaders: newMHeaders,
           monthlyAmount: newMAmount,
           debt_str1: debt_str,
+          tempMembers: tempMembers,
         });
       })
       .catch(() => {
@@ -230,7 +235,6 @@ class ShowGroup extends Component {
       },
       totalAmount: "",
       members: this.props.members,
-      tempMembers: [this.props.user, this.props.members],
       user: this.props.user,
       selectedMembers: [],
       name: "",
@@ -272,11 +276,11 @@ class ShowGroup extends Component {
       //   ? evt.target.value
       //   : this.state.amountValue;
       //this.setState({ amountValue: evt.target.value });
-      var array = [...this.state.members];
+      var array = [...this.state.allMembers];
       var index = array.indexOf(val);
       if (index !== -1) {
         array[index].amountValue = evt.target.value;
-        this.setState({ members: array });
+        this.setState({ allMembers: array });
       }
     }
   };
@@ -492,11 +496,13 @@ class ShowGroup extends Component {
                     >
                       {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
                         Object.keys(this.state.groupSingle.debts.debts)
-                          .filter((val) => this.state.groupSingle.debts.debts[val] < 0)
                           .map((value, index) => (
                             <>
                               <Dropdown.Item key={index} eventKey={value}>
-                                {this.state.idUserMap[value]} ({this.state.groupSingle.debts.debts[value]}$){" "}
+                                {console.log("here")}
+                                {console.log(this.state.groupSingle.debts.debts)}
+                                {console.log(index)}
+                                {this.state.idUserMap[value]} ({Math.round((this.state.groupSingle.debts.debts[value] * 1 +Number.EPSILON)*100)/100}$){" "}
                               </Dropdown.Item>
                               <hr />
                             </>
@@ -584,11 +590,11 @@ class ShowGroup extends Component {
                             }
                           >
                             <Button
-                              variant="danger"
+                              variant="outline-light"
                               className="float-end rounded-pill"
                               onClick={() => this.setState({ cshow: true })}
                             >
-                              <MdDelete fontSize="1.5em" className="mb-1" />{" "}
+                              <FcMoneyTransfer fontSize="1.5em" className="mb-1" />{" "}
                             </Button>
                           </OverlayTrigger>
                         </Col>
@@ -612,24 +618,8 @@ class ShowGroup extends Component {
                                 {val.name}
                               </Col>
                               <Col className="d-flex justify-content-end">
-                                <OverlayTrigger
-                                  placement="bottom"
-                                  overlay={
-                                    <Tooltip id="button-tooltip-2">
-                                      Edit
-                                    </Tooltip>
-                                  }
-                                >
-                                  <Button
-                                    className="m-1 rounded"
-                                    variant="outline-light"
-                                  >
-                                    <RiPencilFill
-                                      fontSize="1.5em"
-                                      color="darkblue"
-                                    />
-                                  </Button>
-                                </OverlayTrigger>
+                                { val.division[0].lender === this.state.user._id &&
+                                  (<>
                                 <OverlayTrigger
                                   placement="bottom"
                                   overlay={
@@ -655,7 +645,7 @@ class ShowGroup extends Component {
                                     <RiDeleteBin5Fill fontSize="1.5em" />
                                   </Button>
 
-                                </OverlayTrigger>
+                                </OverlayTrigger></>)}
                               </Col>
                             </Row>
                           </Container>
