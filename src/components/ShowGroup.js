@@ -28,6 +28,7 @@ import { deleteExpense, getSingleGroups } from "../redux/actions/group";
 import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
+import { archiveExpense } from "../redux/actions/group";
 
 class ShowGroup extends Component {
   constructor(props) {
@@ -67,12 +68,9 @@ class ShowGroup extends Component {
     this.handleText = this.handleText.bind(this);
     this.handleAmount = this.handleAmount.bind(this);
     this.handleAdd = this.handleAdd.bind(this);
+    this.archiveExpense = this.archiveExpense.bind(this);
     this.clearMessage();
     this.getGroupData();
-  }
-
-  componentDidMount() {
-    //this.getGroupData();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -87,62 +85,62 @@ class ShowGroup extends Component {
   }
 
   handleAdd = () => {
-    if(this.state.name === "" || this.state.totalAmount === "") {
+    if (this.state.name === "" || this.state.totalAmount === "") {
       alert("Please fill in all the details!");
-      return
+      return;
     }
     if (this.state.SplitName.formHorizontalRadios !== "equal") {
-      let total = 0
+      let total = 0;
       this.state.members.map((item) => {
-        total += (item.amountValue * 1)
+        total += item.amountValue * 1;
       });
-      if(total !== (this.state.totalAmount * 1)) {
+      if (total !== this.state.totalAmount * 1) {
         alert("Please fill appropriate amount for distribution!");
         return;
       }
     } else if (this.state.selectedMembers.length <= 0) {
       alert("Please fill in all the details!");
-      return
+      return;
     }
-    const obj = {}
-    obj["name"] = this.state.name
-    obj["division"] = []
+    const obj = {};
+    obj["name"] = this.state.name;
+    obj["division"] = [];
     if (this.state.SplitName.formHorizontalRadios === "equal") {
       this.state.selectedMembers.map((item) => {
-        item.amountValue = (this.state.totalAmount * 1)/(this.state.selectedMembers.length);
+        item.amountValue =
+          (this.state.totalAmount * 1) / this.state.selectedMembers.length;
         let division = {
           lender: this.state.user._id,
           borrower: item._id,
           amount: item.amountValue,
-        }
+        };
         obj["division"].push(division);
       });
     } else {
       this.state.members.map((item) => {
-        if(item.amountValue != 0) {
+        if (item.amountValue != 0) {
           let division = {
             lender: this.state.user._id,
             borrower: item._id,
             amount: item.amountValue,
-          }
+          };
           obj["division"].push(division);
         }
       });
     }
     obj["amount"] = this.state.totalAmount * 1;
     console.log(obj);
-    const { dispatch } = this.props
+    const { dispatch } = this.props;
     dispatch(addExpense(this.state.id, obj))
-    .then(() => {
-      this.handleClose();
-    })
-    .catch(() => {
-    });
-  }
+      .then(() => {
+        this.handleClose();
+      })
+      .catch(() => {});
+  };
 
   handleName = (e) => {
-    this.setState({ name: e.target.value});
-  }
+    this.setState({ name: e.target.value });
+  };
 
   handleChange = (e) => {
     const { name, value } = e.target;
@@ -153,7 +151,7 @@ class ShowGroup extends Component {
       SplitName: {
         [name]: value,
       },
-      members: this.state.members
+      members: this.state.members,
     });
   };
 
@@ -240,7 +238,7 @@ class ShowGroup extends Component {
     });
     window.location.reload();
   };
-  
+
   handleDebtsClose = () => {
     this.setState({ cshow: false });
     window.location.reload();
@@ -275,10 +273,10 @@ class ShowGroup extends Component {
       //   : this.state.amountValue;
       //this.setState({ amountValue: evt.target.value });
       var array = [...this.state.members];
-      var index = array.indexOf(val)
+      var index = array.indexOf(val);
       if (index !== -1) {
         array[index].amountValue = evt.target.value;
-        this.setState({members: array});
+        this.setState({ members: array });
       }
     }
   };
@@ -295,15 +293,29 @@ class ShowGroup extends Component {
 
   handleCheck = (e, val) => {
     if (e.target.checked) {
-      this.setState({selectedMembers: [...this.state.selectedMembers, val]});
+      this.setState({ selectedMembers: [...this.state.selectedMembers, val] });
     } else {
       var array = [...this.state.selectedMembers];
-      var index = array.indexOf(val)
+      var index = array.indexOf(val);
       if (index !== -1) {
         array.splice(index, 1);
-        this.setState({selectedMembers: array});
+        this.setState({ selectedMembers: array });
       }
     }
+  };
+
+
+  archiveExpense = (gId, eId, gName, eName) => {
+    const { dispatch } = this.props;
+    var obj = {};
+    obj["groupName"] = gName;
+    obj["expenseName"] = eName;
+    console.log(obj);
+    dispatch(archiveExpense(gId, eId, obj))
+      .then(console.log(obj))
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   onClearDebtMemberSelected = (e) => {
@@ -325,131 +337,134 @@ class ShowGroup extends Component {
       });
   };
 
-  deleteExpense = (expenseId, expenseName) => {
-    const { dispatch } = this.props
-    const obj = {}
-    obj["groupName"] = this.state.groupSingle.data.name
-    obj["expanseName"] = expenseName
-    dispatch(deleteExpense(this.state.id, expenseId, obj))
-    .then(() => {
-      window.location.reload();
-    })
-    .catch(() => {
-    });
-  }
-
   render() {
     return (
       <>
         <>
-        <Modal
-          size="lg"
-          show={this.state.lgShow}
-          onHide={() => this.setState({ lgShow: false })}
-          aria-labelledby="example-modal-sizes-title-lg"
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="example-modal-sizes-title-lg">
-              Add Expense
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Enter Expense Name</Form.Label>
-                <Form.Control type="text" placeholder="Walmart, Uber, etc." onChange={this.handleName} value={this.state.name}/>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Enter Amount</Form.Label>
-                <Form.Control type="text" placeholder="$0.00" onChange={this.handleAmount} value={this.state.totalAmount}/>
-              </Form.Group>
-              <Form.Group controlId="formFileMultiple" className="mb-3">
-                <Form.Label>Upload Bill(Optional)</Form.Label>
-                <Form.Control type="file" multiple />
-              </Form.Group>
-              <fieldset>
-                <Form.Group as={Row} className="mb-3">
-                  <Form.Label>Split</Form.Label>
-                  <Col sm={10} className="d-flex flex-row">
-                    <Form.Check
-                      className="m-2"
-                      type="radio"
-                      label="Equally"
-                      value="equal"
-                      name="formHorizontalRadios"
-                      id="formHorizontalRadios1"
-                      onChange={this.handleChange}
-                      checked={
-                        this.state.SplitName.formHorizontalRadios === "equal"
-                      }
-                    />
-                    <Form.Check
-                      className="m-2"
-                      type="radio"
-                      label="Unequally"
-                      value="unequal"
-                      name="formHorizontalRadios"
-                      id="formHorizontalRadios2"
-                      onChange={this.handleChange}
-                    />
-                  </Col>
+          <Modal
+            size="lg"
+            show={this.state.lgShow}
+            onHide={() => this.setState({ lgShow: false })}
+            aria-labelledby="example-modal-sizes-title-lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title id="example-modal-sizes-title-lg">
+                Add Expense
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label>Enter Expense Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Walmart, Uber, etc."
+                    onChange={this.handleName}
+                    value={this.state.name}
+                  />
                 </Form.Group>
-              </fieldset>
-              <Form.Label>Members: </Form.Label>
-              <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
-                {this.state.SplitName["formHorizontalRadios"] === "equal"
-                  ? this.state.tempMembers.map((val, index) => (
-                      <div key={index} className="mb-3">
-                        <Form.Check
-                          inline
-                          label={val.displayName}
-                          title={"Hello"}
-                          name="group1"
-                          type="checkbox"
-                          id="inline-checkbox-1"
-                          onChange={(event) => this.handleCheck(event, val)}
-                        />
-                      </div>
-                    ))
-                  : this.state.tempMembers.map((val, index) => (
-                      <div key={index} className="mb-3">
-                        <label>{val.displayName}</label>
-                        <input
-                          id={index}
-                          type="text"
-                          name="number"
-                          placeholder="$0.00"
-                          className="m-2"
-                          onChange={(event) => this.handleText(event, val)}
-                          value={val.amountValue}
-                        />
-                      </div>
-                    ))}
-              </div>
-            </Form>
-            {this.state.message && (
-              <>
-                <Alert variant={"danger"}>{this.state.message}</Alert>
-              </>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              onClick={this.handleClose}
-              variant="danger"
-              className="rounded-pill"
-            >
-              Close
-            </Button>
-            <Button
-              onClick={this.handleAdd}
-              variant="primary"
-              className="rounded-pill"
-            >
-              Add
-            </Button>
-          </Modal.Footer>
-        </Modal>
+                <Form.Group
+                  className="mb-3"
+                  controlId="exampleForm.ControlInput1"
+                >
+                  <Form.Label>Enter Amount</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="$0.00"
+                    onChange={this.handleAmount}
+                    value={this.state.totalAmount}
+                  />
+                </Form.Group>
+                <Form.Group controlId="formFileMultiple" className="mb-3">
+                  <Form.Label>Upload Bill(Optional)</Form.Label>
+                  <Form.Control type="file" multiple />
+                </Form.Group>
+                <fieldset>
+                  <Form.Group as={Row} className="mb-3">
+                    <Form.Label>Split</Form.Label>
+                    <Col sm={10} className="d-flex flex-row">
+                      <Form.Check
+                        className="m-2"
+                        type="radio"
+                        label="Equally"
+                        value="equal"
+                        name="formHorizontalRadios"
+                        id="formHorizontalRadios1"
+                        onChange={this.handleChange}
+                        checked={
+                          this.state.SplitName.formHorizontalRadios === "equal"
+                        }
+                      />
+                      <Form.Check
+                        className="m-2"
+                        type="radio"
+                        label="Unequally"
+                        value="unequal"
+                        name="formHorizontalRadios"
+                        id="formHorizontalRadios2"
+                        onChange={this.handleChange}
+                      />
+                    </Col>
+                  </Form.Group>
+                </fieldset>
+                <Form.Label>Members: </Form.Label>
+                <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
+                  {this.state.SplitName["formHorizontalRadios"] === "equal"
+                    ? this.state.tempMembers.map((val, index) => (
+                        <div key={index} className="mb-3">
+                          <Form.Check
+                            inline
+                            label={val.displayName}
+                            title={"Hello"}
+                            name="group1"
+                            type="checkbox"
+                            id="inline-checkbox-1"
+                            onChange={(event) => this.handleCheck(event, val)}
+                          />
+                        </div>
+                      ))
+                    : this.state.tempMembers.map((val, index) => (
+                        <div key={index} className="mb-3">
+                          <label>{val.displayName}</label>
+                          <input
+                            id={index}
+                            type="text"
+                            name="number"
+                            placeholder="$0.00"
+                            className="m-2"
+                            onChange={(event) => this.handleText(event, val)}
+                            value={val.amountValue}
+                          />
+                        </div>
+                      ))}
+                </div>
+              </Form>
+              {this.state.message && (
+                <>
+                  <Alert variant={"danger"}>{this.state.message}</Alert>
+                </>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                onClick={this.handleClose}
+                variant="danger"
+                className="rounded-pill"
+              >
+                Close
+              </Button>
+              <Button
+                onClick={this.handleAdd}
+                variant="primary"
+                className="rounded-pill"
+              >
+                Add
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </>
         <>
           <Modal
@@ -605,12 +620,15 @@ class ShowGroup extends Component {
                                     </Tooltip>
                                   }
                                 >
-                                  <div className="m-1 ">
+                                  <Button
+                                    className="m-1 rounded"
+                                    variant="outline-light"
+                                  >
                                     <RiPencilFill
                                       fontSize="1.5em"
                                       color="darkblue"
                                     />
-                                  </div>
+                                  </Button>
                                 </OverlayTrigger>
                                 <OverlayTrigger
                                   placement="bottom"
@@ -620,13 +638,23 @@ class ShowGroup extends Component {
                                     </Tooltip>
                                   }
                                 >
-                                  <div className="m-1">
-                                    <RiDeleteBin5Fill
-                                      fontSize="1.5em"
-                                      color="red"
-                                      onClick={() => this.deleteExpense(val._id, val.name)}
-                                    />
-                                  </div>
+
+                                  <Button
+                                    className="m-1 rounded"
+                                    variant="danger"
+                                    disabled={val.is_deleted}
+                                    onClick={() =>
+                                      this.archiveExpense(
+                                        this.state.groupSingle.data._id,
+                                        val._id,
+                                        this.state.groupSingle.data.name,
+                                        val.name
+                                      )
+                                    }
+                                  >
+                                    <RiDeleteBin5Fill fontSize="1.5em" />
+                                  </Button>
+
                                 </OverlayTrigger>
                               </Col>
                             </Row>
@@ -716,7 +744,13 @@ class ShowGroup extends Component {
                           {
                             label: "Users",
                             fill: true,
-                            backgroundColor: "blue",
+                            backgroundColor: [
+                              "#B21F00",
+                              "#C9DE00",
+                              "#2FDE00",
+                              "#00A6B4",
+                              "#6800B4",
+                            ],
                             borderColor: "rgba(0,0,0,1)",
                             borderWidth: 1,
                             data: this.state.weeklyAmount,

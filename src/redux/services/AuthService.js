@@ -68,13 +68,9 @@ const addExpense = (groupId, obj) => {
 };
 
 const archiveExpense = (groupId, expenseId, obj) => {
-  return axios.delete(
-    GROUP_URL + groupId + "/expense/" + expenseId + "/",
-    obj,
-    {
-      headers: AuthHeader(),
-    }
-  );
+  return axios.put(GROUP_URL + groupId + "/expense/" + expenseId + "/", obj, {
+    headers: AuthHeader(),
+  });
 };
 
 const archiveGroup = (groupId, obj) => {
