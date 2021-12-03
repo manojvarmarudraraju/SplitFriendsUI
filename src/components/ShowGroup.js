@@ -15,10 +15,9 @@ import {
   Alert,
 } from "react-bootstrap";
 import Header from "./Header";
-import { IoMdListBox } from "react-icons/io";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
-import { RiPencilFill, RiDeleteBin5Fill } from "react-icons/ri";
+import { RiDeleteBin5Fill, RiAddFill } from "react-icons/ri";
 import { FcMoneyTransfer } from 'react-icons/fc';
 import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
@@ -579,7 +578,7 @@ class ShowGroup extends Component {
                               className="float-end rounded-pill"
                               onClick={() => this.setState({ lgShow: true })}
                             >
-                              <IoMdListBox fontSize="1.5em" className="mb-1" />{" "}
+                              <RiAddFill fontSize="1.5em" className="mb-1" />{" "}
                             </Button>
                           </OverlayTrigger>
 
