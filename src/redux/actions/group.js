@@ -131,8 +131,8 @@ export const archiveGroup = (id, obj) => (dispatch) => {
   );
 };
 
-export const archiveExpense = (id1, id2) => (dispatch) => {
-  return AuthService.archiveExpense(id1, id2).then(
+export const archiveExpense = (id1, id2, obj) => (dispatch) => {
+  return AuthService.archiveExpense(id1, id2, obj).then(
     (response) => {
       dispatch({
         type: ARCH_EXP_SUCCESS,

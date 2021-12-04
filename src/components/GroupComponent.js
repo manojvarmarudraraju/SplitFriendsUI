@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 const GroupComponent = (props) => {
   const { data } = props;
 
-  const {idUserMap} = useSelector(state => state.auth);
+  const { idUserMap } = useSelector((state) => state.auth);
 
   var debt_str = "";
   Object.keys(data.debts.debts).forEach((val) => {
@@ -30,20 +30,14 @@ const GroupComponent = (props) => {
   const dispatch = useDispatch();
 
   const handleArchive = () => {
-    if (Object.keys(data.debts.debts).length !== 0) {
-      alert(
-        "There are some unclear debts in this group. Please clear it before deleting..."
-      );
-    } else {
-      var obj = {};
-      obj["groupName"] = data.name;
-      console.log(obj);
-      dispatch(archiveGroup(data._id, obj))
-        .then(console.log("called"))
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+    var obj = {};
+    obj["groupName"] = data.name;
+    console.log(obj);
+    dispatch(archiveGroup(data._id, obj))
+      .then(window.location.reload())
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
