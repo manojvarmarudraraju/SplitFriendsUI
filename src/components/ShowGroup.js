@@ -18,7 +18,7 @@ import Header from "./Header";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
 import { RiDeleteBin5Fill, RiAddFill } from "react-icons/ri";
-import { FcMoneyTransfer } from 'react-icons/fc';
+import { FcMoneyTransfer } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
@@ -153,7 +153,7 @@ class ShowGroup extends Component {
       SplitName: {
         [name]: value,
       },
-      allMembers: this.state.allMembers
+      allMembers: this.state.allMembers,
     });
   };
 
@@ -161,7 +161,11 @@ class ShowGroup extends Component {
     const { idUserMap } = this.state;
     let names = [];
     val.division.map(function (d, idx) {
-      let name = idUserMap[d.borrower] + "($" + Math.round(Math.abs(d.amount * 1 + Number.EPSILON) * 100)/100 + ")";
+      let name =
+        idUserMap[d.borrower] +
+        "($" +
+        Math.round(Math.abs(d.amount * 1 + Number.EPSILON) * 100) / 100 +
+        ")";
       names.push(name);
     });
     return <>{names.join(", ")}</>;
@@ -197,7 +201,11 @@ class ShowGroup extends Component {
           debt_str +=
             this.state.idUserMap[val] +
             ": $" +
-            Math.round((this.state.groupSingle.debts.debts[val] * 1 + Number.EPSILON)*100)/100 +
+            Math.round(
+              (this.state.groupSingle.debts.debts[val] * 1 + Number.EPSILON) *
+                100
+            ) /
+              100 +
             ", ";
         });
         debt_str = debt_str.slice(0, -2);
@@ -213,8 +221,11 @@ class ShowGroup extends Component {
           monthlyHeaders: newMHeaders,
           monthlyAmount: newMAmount,
           debt_str1: debt_str,
-          tempMembers: this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id) || 
-          val._id === this.props.groupSingle.data.admin),
+          tempMembers: this.state.allMembers.filter(
+            (val) =>
+              this.props.groupSingle.data.members.includes(val._id) ||
+              val._id === this.props.groupSingle.data.admin
+          ),
         });
       })
       .catch(() => {
@@ -245,20 +256,28 @@ class ShowGroup extends Component {
   handleDebtsClose = () => {
     this.setState({ cshow: false });
     window.location.reload();
-  }
+  };
 
   handleDebtsSubmit = () => {
-    if (this.state.clearDebtSelectedMember === "" || this.state.clearDebtSelectedMemberAmount * 1 === 0) {
+    if (
+      this.state.clearDebtSelectedMember === "" ||
+      this.state.clearDebtSelectedMemberAmount * 1 === 0
+    ) {
       alert("Please fill in all the details!");
-      return
+      return;
     }
-    if (this.state.clearDebtSelectedMemberAmount * 1  > Math.abs(this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) || 
-      this.state.clearDebtSelectedMemberAmount * 1  < 0){
+    if (
+      this.state.clearDebtSelectedMemberAmount * 1 >
+        Math.abs(
+          this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]
+        ) ||
+      this.state.clearDebtSelectedMemberAmount * 1 < 0
+    ) {
       alert("Please enter valid amount to clear your debt.");
-      return
+      return;
     }
-  }
-  
+  };
+
   handleNav = (e) => {
     const { name, id } = e.target;
     this.setState({
@@ -307,12 +326,12 @@ class ShowGroup extends Component {
     }
   };
 
-
   archiveExpense = (gId, eId, gName, eName) => {
     const { dispatch } = this.props;
     var obj = {};
     obj["groupName"] = gName;
     obj["expenseName"] = eName;
+    console.log(obj);
     dispatch(archiveExpense(gId, eId, obj))
       .then(window.location.reload())
       .catch((error) => {
@@ -323,29 +342,34 @@ class ShowGroup extends Component {
   onClearDebtMemberSelected = (e) => {
     this.setState({
       clearDebtSelectedMember: e,
-      clearDebtSelectedMemberAmount: Math.abs(this.state.groupSingle.debts.debts[e]),
+      clearDebtSelectedMemberAmount: Math.abs(
+        this.state.groupSingle.debts.debts[e]
+      ),
       isClearAllDebt: true,
-    })
-  }
+    });
+  };
 
   handleClearDebtAmount = (evt) => {
     let temp = false;
-      if(evt.target.value * 1 === this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]) {
-        temp = true;
-      }
-      this.setState({
-        clearDebtSelectedMemberAmount: evt.target.value * 1,
-        isClearAllDebt: temp,
-      });
+    if (
+      evt.target.value * 1 ===
+      this.state.groupSingle.debts.debts[this.state.clearDebtSelectedMember]
+    ) {
+      temp = true;
+    }
+    this.setState({
+      clearDebtSelectedMemberAmount: evt.target.value * 1,
+      isClearAllDebt: temp,
+    });
   };
 
   handleBillUpload = (e) => {
     console.log(e.target);
-  }
+  };
 
   render() {
-    if(this.state.isAPISuccess && this.state.groupSingle.data != null) {
-      return ( 
+    if (this.state.isAPISuccess && this.state.groupSingle.data != null) {
+      return (
         <>
           <>
             <Modal
@@ -387,7 +411,10 @@ class ShowGroup extends Component {
                   </Form.Group>
                   <Form.Group controlId="formFileMultiple" className="mb-3">
                     <Form.Label>Upload Bill(Optional)</Form.Label>
-                    <Form.Control type="file" onChange={this.handleBillUpload}/>
+                    <Form.Control
+                      type="file"
+                      onChange={this.handleBillUpload}
+                    />
                   </Form.Group>
                   <fieldset>
                     <Form.Group as={Row} className="mb-3">
@@ -402,7 +429,8 @@ class ShowGroup extends Component {
                           id="formHorizontalRadios1"
                           onChange={this.handleChange}
                           checked={
-                            this.state.SplitName.formHorizontalRadios === "equal"
+                            this.state.SplitName.formHorizontalRadios ===
+                            "equal"
                           }
                         />
                         <Form.Check
@@ -418,7 +446,10 @@ class ShowGroup extends Component {
                     </Form.Group>
                   </fieldset>
                   <Form.Label>Members: </Form.Label>
-                  <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
+                  <div
+                    className="d-flex flex-row"
+                    style={{ overflowY: "auto" }}
+                  >
                     {this.state.SplitName["formHorizontalRadios"] === "equal"
                       ? this.state.tempMembers.map((val, index) => (
                           <div key={index} className="mb-3">
@@ -487,7 +518,9 @@ class ShowGroup extends Component {
                 <Container>
                   <Row>
                     <Col>Group Name:</Col>
-                    <Col className="text-uppercase">{this.state.groupSingle.data.name}</Col>
+                    <Col className="text-uppercase">
+                      {this.state.groupSingle.data.name}
+                    </Col>
                   </Row>
                   <Row className="mt-2">
                     <Col className="float-start">
@@ -497,16 +530,25 @@ class ShowGroup extends Component {
                         className="rounded-pill"
                         onSelect={this.onClearDebtMemberSelected}
                       >
-                        {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
-                          Object.keys(this.state.groupSingle.debts.debts)
-                            .map((value, index) => (
+                        {Object.keys(this.state.groupSingle.debts.debts)
+                          .length !== 0 &&
+                          Object.keys(this.state.groupSingle.debts.debts).map(
+                            (value, index) => (
                               <>
                                 <Dropdown.Item key={index} eventKey={value}>
-                                  {this.state.idUserMap[value]} ({Math.round((this.state.groupSingle.debts.debts[value] * 1 +Number.EPSILON)*100)/100}$){" "}
+                                  {this.state.idUserMap[value]} (
+                                  {Math.round(
+                                    (this.state.groupSingle.debts.debts[value] *
+                                      1 +
+                                      Number.EPSILON) *
+                                      100
+                                  ) / 100}
+                                  $){" "}
                                 </Dropdown.Item>
                                 <hr />
                               </>
-                            ))}
+                            )
+                          )}
                       </DropdownButton>
                     </Col>
                     <Col>
@@ -586,7 +628,9 @@ class ShowGroup extends Component {
                             <OverlayTrigger
                               placement="bottom"
                               overlay={
-                                <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
+                                <Tooltip id="button-tooltip-2">
+                                  SettleUp
+                                </Tooltip>
                               }
                             >
                               <Button
@@ -594,7 +638,10 @@ class ShowGroup extends Component {
                                 className="float-end rounded-pill"
                                 onClick={() => this.setState({ cshow: true })}
                               >
-                                <FcMoneyTransfer fontSize="1.5em" className="mb-1" />{" "}
+                                <FcMoneyTransfer
+                                  fontSize="1.5em"
+                                  className="mb-1"
+                                />{" "}
                               </Button>
                             </OverlayTrigger>
                           </Col>
@@ -618,34 +665,35 @@ class ShowGroup extends Component {
                                   {val.name}
                                 </Col>
                                 <Col className="d-flex justify-content-end">
-                                  { val.division[0].lender === this.state.user._id &&
-                                    (<>
-                                  <OverlayTrigger
-                                    placement="bottom"
-                                    overlay={
-                                      <Tooltip id="button-tooltip-2">
-                                        Archive
-                                      </Tooltip>
-                                    }
-                                  >
-
-                                    <Button
-                                      className="m-1 rounded"
-                                      variant="danger"
-                                      disabled={val.is_deleted}
-                                      onClick={() =>
-                                        this.archiveExpense(
-                                          this.state.groupSingle.data._id,
-                                          val._id,
-                                          this.state.groupSingle.data.name,
-                                          val.name
-                                        )
-                                      }
-                                    >
-                                      <RiDeleteBin5Fill fontSize="1.5em" />
-                                    </Button>
-
-                                  </OverlayTrigger></>)}
+                                  {val.division[0].lender ===
+                                    this.state.user._id && (
+                                    <>
+                                      <OverlayTrigger
+                                        placement="bottom"
+                                        overlay={
+                                          <Tooltip id="button-tooltip-2">
+                                            Archive
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <Button
+                                          className="m-1 rounded"
+                                          variant="danger"
+                                          disabled={val.is_deleted}
+                                          onClick={() =>
+                                            this.archiveExpense(
+                                              this.state.groupSingle.data._id,
+                                              val._id,
+                                              this.state.groupSingle.data.name,
+                                              val.name
+                                            )
+                                          }
+                                        >
+                                          <RiDeleteBin5Fill fontSize="1.5em" />
+                                        </Button>
+                                      </OverlayTrigger>
+                                    </>
+                                  )}
                                 </Col>
                               </Row>
                             </Container>
@@ -813,9 +861,7 @@ class ShowGroup extends Component {
         </>
       );
     } else {
-      return (
-        <MyLoader />
-      );
+      return <MyLoader />;
     }
   }
 }
