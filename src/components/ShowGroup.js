@@ -29,6 +29,7 @@ import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
 import { archiveExpense } from "../redux/actions/group";
+import MyLoader from "./MyLoader";
 
 class ShowGroup extends Component {
   constructor(props) {
@@ -205,7 +206,8 @@ class ShowGroup extends Component {
         if (debt_str === "") {
           debt_str = "No debts to show.";
         }
-        const tempMembers = this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id))
+        const tempMembers = this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id) || 
+        val._id === this.props.groupSingle.data.members)
         this.setState({
           ...this.state,
           isAPICalled: false,
@@ -342,480 +344,486 @@ class ShowGroup extends Component {
   };
 
   handleBillUpload = (e) => {
-    console.log(e.target.files[0]);
+    console.log(e.target);
   }
 
   render() {
-    return (
-      <>
+    if(this.state.isAPISuccess && this.state.groupSingle.data != null) {
+      return ( 
         <>
-          <Modal
-            size="lg"
-            show={this.state.lgShow}
-            onHide={() => this.setState({ lgShow: false })}
-            aria-labelledby="example-modal-sizes-title-lg"
-          >
-            <Modal.Header closeButton>
-              <Modal.Title id="example-modal-sizes-title-lg">
-                Add Expense
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group
-                  className="mb-3"
-                  controlId="exampleForm.ControlInput1"
+          <>
+            <Modal
+              size="lg"
+              show={this.state.lgShow}
+              onHide={() => this.setState({ lgShow: false })}
+              aria-labelledby="example-modal-sizes-title-lg"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="example-modal-sizes-title-lg">
+                  Add Expense
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="exampleForm.ControlInput1"
+                  >
+                    <Form.Label>Enter Expense Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Walmart, Uber, etc."
+                      onChange={this.handleName}
+                      value={this.state.name}
+                    />
+                  </Form.Group>
+                  <Form.Group
+                    className="mb-3"
+                    controlId="exampleForm.ControlInput1"
+                  >
+                    <Form.Label>Enter Amount</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="$0.00"
+                      onChange={this.handleAmount}
+                      value={this.state.totalAmount}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="formFileMultiple" className="mb-3">
+                    <Form.Label>Upload Bill(Optional)</Form.Label>
+                    <Form.Control type="file" onChange={this.handleBillUpload}/>
+                  </Form.Group>
+                  <fieldset>
+                    <Form.Group as={Row} className="mb-3">
+                      <Form.Label>Split</Form.Label>
+                      <Col sm={10} className="d-flex flex-row">
+                        <Form.Check
+                          className="m-2"
+                          type="radio"
+                          label="Equally"
+                          value="equal"
+                          name="formHorizontalRadios"
+                          id="formHorizontalRadios1"
+                          onChange={this.handleChange}
+                          checked={
+                            this.state.SplitName.formHorizontalRadios === "equal"
+                          }
+                        />
+                        <Form.Check
+                          className="m-2"
+                          type="radio"
+                          label="Unequally"
+                          value="unequal"
+                          name="formHorizontalRadios"
+                          id="formHorizontalRadios2"
+                          onChange={this.handleChange}
+                        />
+                      </Col>
+                    </Form.Group>
+                  </fieldset>
+                  <Form.Label>Members: </Form.Label>
+                  <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
+                    {this.state.SplitName["formHorizontalRadios"] === "equal"
+                      ? this.state.tempMembers.map((val, index) => (
+                          <div key={index} className="mb-3">
+                            <Form.Check
+                              inline
+                              label={val.displayName}
+                              title={"Hello"}
+                              name="group1"
+                              type="checkbox"
+                              id="inline-checkbox-1"
+                              onChange={(event) => this.handleCheck(event, val)}
+                            />
+                          </div>
+                        ))
+                      : this.state.tempMembers.map((val, index) => (
+                          <div key={index} className="mb-3">
+                            <label>{val.displayName}</label>
+                            <input
+                              id={index}
+                              type="text"
+                              name="number"
+                              placeholder="$0.00"
+                              className="m-2"
+                              onChange={(event) => this.handleText(event, val)}
+                              value={val.amountValue}
+                            />
+                          </div>
+                        ))}
+                  </div>
+                </Form>
+                {this.state.message && (
+                  <>
+                    <Alert variant={"danger"}>{this.state.message}</Alert>
+                  </>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  onClick={this.handleClose}
+                  variant="danger"
+                  className="rounded-pill"
                 >
-                  <Form.Label>Enter Expense Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Walmart, Uber, etc."
-                    onChange={this.handleName}
-                    value={this.state.name}
-                  />
-                </Form.Group>
-                <Form.Group
-                  className="mb-3"
-                  controlId="exampleForm.ControlInput1"
+                  Close
+                </Button>
+                <Button
+                  onClick={this.handleAdd}
+                  variant="primary"
+                  className="rounded-pill"
                 >
-                  <Form.Label>Enter Amount</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="$0.00"
-                    onChange={this.handleAmount}
-                    value={this.state.totalAmount}
-                  />
-                </Form.Group>
-                <Form.Group controlId="formFileMultiple" className="mb-3">
-                  <Form.Label>Upload Bill(Optional)</Form.Label>
-                  <Form.Control type="file" onChange={this.handleBillUpload}/>
-                </Form.Group>
-                <fieldset>
-                  <Form.Group as={Row} className="mb-3">
-                    <Form.Label>Split</Form.Label>
-                    <Col sm={10} className="d-flex flex-row">
-                      <Form.Check
+                  Add
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </>
+          <>
+            <Modal
+              show={this.state.cshow}
+              onHide={this.handleDebtsClose}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Clear Debts</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Container>
+                  <Row>
+                    <Col>Group Name:</Col>
+                    <Col className="text-uppercase">{this.state.groupSingle.data.name}</Col>
+                  </Row>
+                  <Row className="mt-2">
+                    <Col className="float-start">
+                      <DropdownButton
+                        id="dropdown-basic-button"
+                        title="Members"
+                        className="rounded-pill"
+                        onSelect={this.onClearDebtMemberSelected}
+                      >
+                        {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
+                          Object.keys(this.state.groupSingle.debts.debts)
+                            .map((value, index) => (
+                              <>
+                                <Dropdown.Item key={index} eventKey={value}>
+                                  {console.log("here")}
+                                  {console.log(this.state.groupSingle.debts.debts)}
+                                  {console.log(index)}
+                                  {this.state.idUserMap[value]} ({Math.round((this.state.groupSingle.debts.debts[value] * 1 +Number.EPSILON)*100)/100}$){" "}
+                                </Dropdown.Item>
+                                <hr />
+                              </>
+                            ))}
+                      </DropdownButton>
+                    </Col>
+                    <Col>
+                      <input
+                        id={1}
+                        type="number"
+                        name="number"
+                        placeholder="$0.00"
                         className="m-2"
-                        type="radio"
-                        label="Equally"
-                        value="equal"
-                        name="formHorizontalRadios"
-                        id="formHorizontalRadios1"
-                        onChange={this.handleChange}
-                        checked={
-                          this.state.SplitName.formHorizontalRadios === "equal"
-                        }
-                      />
-                      <Form.Check
-                        className="m-2"
-                        type="radio"
-                        label="Unequally"
-                        value="unequal"
-                        name="formHorizontalRadios"
-                        id="formHorizontalRadios2"
-                        onChange={this.handleChange}
+                        onChange={(event) => this.handleClearDebtAmount(event)}
+                        value={this.state.clearDebtSelectedMemberAmount}
                       />
                     </Col>
-                  </Form.Group>
-                </fieldset>
-                <Form.Label>Members: </Form.Label>
-                <div className="d-flex flex-row" style={{ overflowY: "auto" }}>
-                  {this.state.SplitName["formHorizontalRadios"] === "equal"
-                    ? this.state.tempMembers.map((val, index) => (
-                        <div key={index} className="mb-3">
-                          <Form.Check
-                            inline
-                            label={val.displayName}
-                            title={"Hello"}
-                            name="group1"
-                            type="checkbox"
-                            id="inline-checkbox-1"
-                            onChange={(event) => this.handleCheck(event, val)}
-                          />
-                        </div>
-                      ))
-                    : this.state.tempMembers.map((val, index) => (
-                        <div key={index} className="mb-3">
-                          <label>{val.displayName}</label>
-                          <input
-                            id={index}
-                            type="text"
-                            name="number"
-                            placeholder="$0.00"
-                            className="m-2"
-                            onChange={(event) => this.handleText(event, val)}
-                            value={val.amountValue}
-                          />
-                        </div>
-                      ))}
-                </div>
-              </Form>
-              {this.state.message && (
-                <>
-                  <Alert variant={"danger"}>{this.state.message}</Alert>
-                </>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                onClick={this.handleClose}
-                variant="danger"
-                className="rounded-pill"
-              >
-                Close
-              </Button>
-              <Button
-                onClick={this.handleAdd}
-                variant="primary"
-                className="rounded-pill"
-              >
-                Add
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </>
-        <>
-          <Modal
-            show={this.state.cshow}
-            onHide={this.handleDebtsClose}
-            backdrop="static"
-            keyboard={false}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>Clear Debts</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Container>
-                <Row>
-                  <Col>Group Name:</Col>
-                  <Col className="text-uppercase">{this.state.groupSingle.data.name}</Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col className="float-start">
-                    <DropdownButton
-                      id="dropdown-basic-button"
-                      title="Members"
-                      className="rounded-pill"
-                      onSelect={this.onClearDebtMemberSelected}
-                    >
-                      {Object.keys(this.state.groupSingle.debts.debts).length !== 0 &&
-                        Object.keys(this.state.groupSingle.debts.debts)
-                          .map((value, index) => (
-                            <>
-                              <Dropdown.Item key={index} eventKey={value}>
-                                {console.log("here")}
-                                {console.log(this.state.groupSingle.debts.debts)}
-                                {console.log(index)}
-                                {this.state.idUserMap[value]} ({Math.round((this.state.groupSingle.debts.debts[value] * 1 +Number.EPSILON)*100)/100}$){" "}
-                              </Dropdown.Item>
-                              <hr />
-                            </>
-                          ))}
-                    </DropdownButton>
-                  </Col>
-                  <Col>
-                    <input
-                      id={1}
-                      type="number"
-                      name="number"
-                      placeholder="$0.00"
-                      className="m-2"
-                      onChange={(event) => this.handleClearDebtAmount(event)}
-                      value={this.state.clearDebtSelectedMemberAmount}
-                    />
-                  </Col>
-                </Row>
-              </Container>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger"
-                onClick={this.handleDebtsClose}
-                className="rounded rounded-pill"
-              >
-                Close
-              </Button>
-              <Button
-                variant="success"
-                className="rounded rounded-pill text-black"
-                onClick={this.handleDebtsSubmit}
-              >
-                Submit
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </>
-        <Header />
-        <Container className="mt-1">
-          <Row>
-            <Col lg="8">
-              <Card>
-                <Card.Header as="h5">
-                  {this.state.groupSingle.data.name}
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title as="h5">
-                    Members:
-                    <Container>
-                      <Row>
-                        <Col lg="9">
-                          {this.state.groupSingle.data.members.map((val) => (
-                            <Button
-                              variant="secondary"
-                              className="rounded-pill fs-6"
-                              size="sm"
+                  </Row>
+                </Container>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="danger"
+                  onClick={this.handleDebtsClose}
+                  className="rounded rounded-pill"
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="success"
+                  className="rounded rounded-pill text-black"
+                  onClick={this.handleDebtsSubmit}
+                >
+                  Submit
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </>
+          <Header />
+          <Container className="mt-1">
+            <Row>
+              <Col lg="8">
+                <Card>
+                  <Card.Header as="h5">
+                    {this.state.groupSingle.data.name}
+                  </Card.Header>
+                  <Card.Body>
+                    <Card.Title as="h5">
+                      Members:
+                      <Container>
+                        <Row>
+                          <Col lg="9">
+                            {this.state.groupSingle.data.members.map((val) => (
+                              <Button
+                                variant="secondary"
+                                className="rounded-pill fs-6"
+                                size="sm"
+                              >
+                                {this.state.idUserMap[val]}
+                              </Button>
+                            ))}
+                          </Col>
+                          <Col>
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id="button-tooltip-2">
+                                  Add Expense
+                                </Tooltip>
+                              }
                             >
-                              {this.state.idUserMap[val]}
-                            </Button>
-                          ))}
-                        </Col>
-                        <Col>
-                          <OverlayTrigger
-                            placement="bottom"
-                            overlay={
-                              <Tooltip id="button-tooltip-2">
-                                Add Expense
-                              </Tooltip>
-                            }
-                          >
-                            <Button
-                              variant="primary"
-                              className="float-end rounded-pill"
-                              onClick={() => this.setState({ lgShow: true })}
-                            >
-                              <RiAddFill fontSize="1.5em" className="mb-1" />{" "}
-                            </Button>
-                          </OverlayTrigger>
+                              <Button
+                                variant="primary"
+                                className="float-end rounded-pill"
+                                onClick={() => this.setState({ lgShow: true })}
+                              >
+                                <RiAddFill fontSize="1.5em" className="mb-1" />{" "}
+                              </Button>
+                            </OverlayTrigger>
 
-                          <OverlayTrigger
-                            placement="bottom"
-                            overlay={
-                              <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
-                            }
-                          >
-                            <Button
-                              variant="outline-light"
-                              className="float-end rounded-pill"
-                              onClick={() => this.setState({ cshow: true })}
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id="button-tooltip-2">SettleUp</Tooltip>
+                              }
                             >
-                              <FcMoneyTransfer fontSize="1.5em" className="mb-1" />{" "}
-                            </Button>
-                          </OverlayTrigger>
-                        </Col>
-                      </Row>
-                    </Container>
-                  </Card.Title>
-                  <Card.Title>Debts:</Card.Title>
-                  <Card.Text>{this.state.debt_str1}</Card.Text>
-                </Card.Body>
-              </Card>
-              {this.state.groupSingle.data.expenses.length > 0 && (
-                <Row className="m-1">
-                  <Card>
-                    <Card.Header as="h5">Expenses</Card.Header>
-                    {this.state.groupSingle.data.expenses.map((val) => (
-                      <Card className="mt-1">
-                        <Card.Header as="h5">
-                          <Container>
-                            <Row>
-                              <Col className="d-flex align-items-center">
-                                {val.name}
-                              </Col>
-                              <Col className="d-flex justify-content-end">
-                                { val.division[0].lender === this.state.user._id &&
-                                  (<>
-                                <OverlayTrigger
-                                  placement="bottom"
-                                  overlay={
-                                    <Tooltip id="button-tooltip-2">
-                                      Archive
-                                    </Tooltip>
-                                  }
-                                >
-
-                                  <Button
-                                    className="m-1 rounded"
-                                    variant="danger"
-                                    disabled={val.is_deleted}
-                                    onClick={() =>
-                                      this.archiveExpense(
-                                        this.state.groupSingle.data._id,
-                                        val._id,
-                                        this.state.groupSingle.data.name,
-                                        val.name
-                                      )
+                              <Button
+                                variant="outline-light"
+                                className="float-end rounded-pill"
+                                onClick={() => this.setState({ cshow: true })}
+                              >
+                                <FcMoneyTransfer fontSize="1.5em" className="mb-1" />{" "}
+                              </Button>
+                            </OverlayTrigger>
+                          </Col>
+                        </Row>
+                      </Container>
+                    </Card.Title>
+                    <Card.Title>Debts:</Card.Title>
+                    <Card.Text>{this.state.debt_str1}</Card.Text>
+                  </Card.Body>
+                </Card>
+                {this.state.groupSingle.data.expenses.length > 0 && (
+                  <Row className="m-1">
+                    <Card>
+                      <Card.Header as="h5">Expenses</Card.Header>
+                      {this.state.groupSingle.data.expenses.map((val) => (
+                        <Card className="mt-1">
+                          <Card.Header as="h5">
+                            <Container>
+                              <Row>
+                                <Col className="d-flex align-items-center">
+                                  {val.name}
+                                </Col>
+                                <Col className="d-flex justify-content-end">
+                                  { val.division[0].lender === this.state.user._id &&
+                                    (<>
+                                  <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={
+                                      <Tooltip id="button-tooltip-2">
+                                        Archive
+                                      </Tooltip>
                                     }
                                   >
-                                    <RiDeleteBin5Fill fontSize="1.5em" />
-                                  </Button>
 
-                                </OverlayTrigger></>)}
-                              </Col>
-                            </Row>
-                          </Container>
-                        </Card.Header>
-                        <Card.Body>
-                          <Container>
-                            <Row>
-                              <Col className="d-flex align-items-top">
-                                <Card.Img
-                                  src={Walmart}
-                                  alt="Walmart.png"
-                                  className="w-25 h-100"
-                                />
-                              </Col>
-                              <Col>
-                                <div className="mx-2 float-end">
-                                  <Card.Title>Details:</Card.Title>
-                                  <Card.Text>
-                                    Lender:{" "}
-                                    {
-                                      this.state.idUserMap[
-                                        val.division[0].lender
-                                      ]
-                                    }
-                                  </Card.Text>
-                                  <Card.Text>
-                                    Borrower: {this.handleBorrowerName(val)}
-                                  </Card.Text>
-                                  <Card.Text>
-                                    Original Amount: ${val.ori_amount}
-                                  </Card.Text>
-                                  <Card.Text>
-                                    Total Amount: ${val.amount}
-                                  </Card.Text>
-                                  <Card.Text>
-                                    Date:{" "}
-                                    {val.date +
-                                      " " +
-                                      new Date(val.timestamp).getHours() +
-                                      ":" +
-                                      new Date(val.timestamp).getMinutes() +
-                                      ":" +
-                                      new Date(val.timestamp).getSeconds()}
-                                  </Card.Text>
-                                </div>
-                              </Col>
-                            </Row>
-                          </Container>
-                        </Card.Body>
-                      </Card>
-                    ))}
-                  </Card>
-                </Row>
-              )}
-            </Col>
-            {this.state.groupSingle.data.expenses.length > 0 && (
-              <Col className="mt-5">
-                <Nav justify variant="pills" defaultActiveKey="home">
-                  <Nav.Item>
-                    <Nav.Link
-                      eventKey="home"
-                      name="navChartItem"
-                      id="weekly"
-                      onClick={this.handleNav}
-                    >
-                      Weekly
-                    </Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link
-                      eventKey="link-1"
-                      name="navChartItem"
-                      id="monthly"
-                      onClick={this.handleNav}
-                    >
-                      Monthly
-                    </Nav.Link>
-                  </Nav.Item>
-                </Nav>
-                {this.state.chartHeader["navChartItem"] === "weekly" ? (
-                  <div>
-                    <Bar
-                      data={{
-                        labels: this.state.weeklyHeaders,
-                        datasets: [
-                          {
-                            label: "Users",
-                            fill: true,
-                            backgroundColor: [
-                              "#B21F00",
-                              "#C9DE00",
-                              "#2FDE00",
-                              "#00A6B4",
-                              "#6800B4",
-                            ],
-                            borderColor: "rgba(0,0,0,1)",
-                            borderWidth: 1,
-                            data: this.state.weeklyAmount,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        plugins: {
-                          title: {
-                            display: true,
-                            text: "Expenses of users for last week",
-                            fontSize: 10,
-                          },
-                          legend: {
-                            display: true,
-                            position: "bottom",
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <Pie
-                      data={{
-                        labels: this.state.monthlyHeaders,
-                        datasets: [
-                          {
-                            label: "Users",
-                            backgroundColor: [
-                              "#B21F00",
-                              "#C9DE00",
-                              "#2FDE00",
-                              "#00A6B4",
-                              "#6800B4",
-                            ],
-                            hoverBackgroundColor: [
-                              "#501800",
-                              "#4B5000",
-                              "#175000",
-                              "#003350",
-                              "#35014F",
-                            ],
-                            data: this.state.monthlyAmount,
-                          },
-                        ],
-                      }}
-                      options={{
-                        responsive: true,
-                        plugins: {
-                          title: {
-                            display: true,
-                            text: "Expenses of users per month",
-                            fontSize: 10,
-                          },
-                          legend: {
-                            display: true,
-                            position: "bottom",
-                          },
-                        },
-                      }}
-                    />
-                  </div>
+                                    <Button
+                                      className="m-1 rounded"
+                                      variant="danger"
+                                      disabled={val.is_deleted}
+                                      onClick={() =>
+                                        this.archiveExpense(
+                                          this.state.groupSingle.data._id,
+                                          val._id,
+                                          this.state.groupSingle.data.name,
+                                          val.name
+                                        )
+                                      }
+                                    >
+                                      <RiDeleteBin5Fill fontSize="1.5em" />
+                                    </Button>
+
+                                  </OverlayTrigger></>)}
+                                </Col>
+                              </Row>
+                            </Container>
+                          </Card.Header>
+                          <Card.Body>
+                            <Container>
+                              <Row>
+                                <Col className="d-flex align-items-top">
+                                  <Card.Img
+                                    src={Walmart}
+                                    alt="Walmart.png"
+                                    className="w-25 h-100"
+                                  />
+                                </Col>
+                                <Col>
+                                  <div className="mx-2 float-end">
+                                    <Card.Title>Details:</Card.Title>
+                                    <Card.Text>
+                                      Lender:{" "}
+                                      {
+                                        this.state.idUserMap[
+                                          val.division[0].lender
+                                        ]
+                                      }
+                                    </Card.Text>
+                                    <Card.Text>
+                                      Borrower: {this.handleBorrowerName(val)}
+                                    </Card.Text>
+                                    <Card.Text>
+                                      Original Amount: ${val.ori_amount}
+                                    </Card.Text>
+                                    <Card.Text>
+                                      Total Amount: ${val.amount}
+                                    </Card.Text>
+                                    <Card.Text>
+                                      Date:{" "}
+                                      {val.date +
+                                        " " +
+                                        new Date(val.timestamp).getHours() +
+                                        ":" +
+                                        new Date(val.timestamp).getMinutes() +
+                                        ":" +
+                                        new Date(val.timestamp).getSeconds()}
+                                    </Card.Text>
+                                  </div>
+                                </Col>
+                              </Row>
+                            </Container>
+                          </Card.Body>
+                        </Card>
+                      ))}
+                    </Card>
+                  </Row>
                 )}
               </Col>
-            )}
-          </Row>
-        </Container>
-      </>
-    );
+              {this.state.groupSingle.data.expenses.length > 0 && (
+                <Col className="mt-5">
+                  <Nav justify variant="pills" defaultActiveKey="home">
+                    <Nav.Item>
+                      <Nav.Link
+                        eventKey="home"
+                        name="navChartItem"
+                        id="weekly"
+                        onClick={this.handleNav}
+                      >
+                        Weekly
+                      </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link
+                        eventKey="link-1"
+                        name="navChartItem"
+                        id="monthly"
+                        onClick={this.handleNav}
+                      >
+                        Monthly
+                      </Nav.Link>
+                    </Nav.Item>
+                  </Nav>
+                  {this.state.chartHeader["navChartItem"] === "weekly" ? (
+                    <div>
+                      <Bar
+                        data={{
+                          labels: this.state.weeklyHeaders,
+                          datasets: [
+                            {
+                              label: "Users",
+                              fill: true,
+                              backgroundColor: [
+                                "#B21F00",
+                                "#C9DE00",
+                                "#2FDE00",
+                                "#00A6B4",
+                                "#6800B4",
+                              ],
+                              borderColor: "rgba(0,0,0,1)",
+                              borderWidth: 1,
+                              data: this.state.weeklyAmount,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: "Expenses of users for last week",
+                              fontSize: 10,
+                            },
+                            legend: {
+                              display: true,
+                              position: "bottom",
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Pie
+                        data={{
+                          labels: this.state.monthlyHeaders,
+                          datasets: [
+                            {
+                              label: "Users",
+                              backgroundColor: [
+                                "#B21F00",
+                                "#C9DE00",
+                                "#2FDE00",
+                                "#00A6B4",
+                                "#6800B4",
+                              ],
+                              hoverBackgroundColor: [
+                                "#501800",
+                                "#4B5000",
+                                "#175000",
+                                "#003350",
+                                "#35014F",
+                              ],
+                              data: this.state.monthlyAmount,
+                            },
+                          ],
+                        }}
+                        options={{
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: "Expenses of users per month",
+                              fontSize: 10,
+                            },
+                            legend: {
+                              display: true,
+                              position: "bottom",
+                            },
+                          },
+                        }}
+                      />
+                    </div>
+                  )}
+                </Col>
+              )}
+            </Row>
+          </Container>
+        </>
+      );
+    } else {
+      return (
+        <MyLoader />
+      );
+    }
   }
 }
 

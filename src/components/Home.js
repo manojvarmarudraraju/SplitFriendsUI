@@ -5,6 +5,7 @@ import { Navigate } from "react-router";
 import { getAllGroups } from "../redux/actions/group";
 import { clearMessage } from "../redux/actions/message";
 import HomePage from "./HomePage";
+import MyLoader from "./MyLoader";
 
 const Home = (props) => {
   const [isGetDataSuccess, setIsGetDataSuccess] = useState(false);
@@ -36,13 +37,21 @@ const Home = (props) => {
     return <Navigate to="/login" />;
   }
 
-  return (
-    <>
-      <Header />
-
-      {isGetDataSuccess && groups && <HomePage Data={groups} />}
-    </>
-  );
+  if(isGetDataSuccess && groups) {
+    return (
+      <>
+        <Header />
+        <HomePage Data={groups} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Header />
+        <MyLoader />
+      </>
+    );
+  }
 };
 
 export default Home;

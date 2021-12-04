@@ -127,7 +127,6 @@ const Header = (props) => {
       obj["admin"] = user._id;
       let membersId = [];
       selectedMember.map((item) => membersId.push(item._id));
-      membersId.push(user._id);
       obj["members"] = membersId;
       dispatch(addGroup(obj))
         .then(() => {
