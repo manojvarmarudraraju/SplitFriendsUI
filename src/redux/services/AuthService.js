@@ -101,6 +101,12 @@ const deleteExpense = (groupId, expenseId, obj) => {
   });
 };
 
+const addNewMember = (groupId, obj) => {
+  return axios.put(GROUP_URL + groupId + "/members", obj, {
+    headers: AuthHeader(),
+  });
+};
+
 export default {
   register,
   login,
@@ -113,5 +119,6 @@ export default {
   archiveGroup,
   archiveExpense,
   clearDebts,
-  deleteExpense
+  deleteExpense,
+  addNewMember,
 };

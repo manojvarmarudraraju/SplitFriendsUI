@@ -16,6 +16,8 @@ import {
   CLEAR_DEBTS_FAILURE,
   DELETE_EXPENSE_SUCCESS,
   DELETE_EXPENSE_FAILURE,
+  ADD_MEMBER_SUCCESS,
+  ADD_MEMBER_FAILURE,
 } from "./types";
 
 import AuthService from "../services/AuthService";
@@ -184,6 +186,27 @@ export const deleteExpense = (groupId, expenseId, obj) => (dispatch) => {
     (error) => {
       dispatch({
         type: DELETE_EXPENSE_FAILURE,
+      });
+      dispatch({
+        type: SET_MESSAGE,
+        payload: "Something went wrong.",
+      });
+      return Promise.reject();
+    }
+  );
+};
+
+export const addNewMember = (groupId, obj) => (dispatch) => {
+  return AuthService.addNewMember(groupId, obj).then(
+    (response) => {
+      dispatch({
+        type: ADD_MEMBER_SUCCESS,
+      });
+      return Promise.resolve();
+    },
+    (error) => {
+      dispatch({
+        type: ADD_MEMBER_FAILURE,
       });
       dispatch({
         type: SET_MESSAGE,
