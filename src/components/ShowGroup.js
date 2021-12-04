@@ -13,18 +13,23 @@ import {
   Dropdown,
   DropdownButton,
   Alert,
+  InputGroup,
+  FormControl,
+  Spinner,
 } from "react-bootstrap";
 import Header from "./Header";
 import Data from "./data/SingleGroupData.json";
 import GActivity from "./data/GroupActivity.json";
+import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBin5Fill, RiAddFill } from "react-icons/ri";
-import { FcMoneyTransfer } from "react-icons/fc";
+import { BsPersonPlus } from "react-icons/bs";
+import { FcMoneyTransfer } from 'react-icons/fc';
 import { MdDelete } from "react-icons/md";
 import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import { clearMessage } from "../redux/actions/message";
-import { deleteExpense, getSingleGroups } from "../redux/actions/group";
+import { addNewMember, deleteExpense, getSingleGroups } from "../redux/actions/group";
 import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
@@ -40,6 +45,7 @@ class ShowGroup extends Component {
       addExp: false,
       lgShow: false,
       cshow: false,
+      amshow: false,
       SplitName: { formHorizontalRadios: "equal" },
       chartHeader: { navChartItem: "weekly" },
       amountValue: "",
@@ -63,6 +69,10 @@ class ShowGroup extends Component {
       clearDebtSelectedMember: "",
       clearDebtSelectedMemberAmount: "",
       isClearAllDebt: false,
+      unAddedMembers: [],
+      filteredMember: [],
+      searchAddMember: "",
+      selectedAddMember: []
     };
     this.clearMessage = this.clearMessage.bind(this);
     this.getGroupData = this.getGroupData.bind(this);
@@ -114,7 +124,7 @@ class ShowGroup extends Component {
         let division = {
           lender: this.state.user._id,
           borrower: item._id,
-          amount: item.amountValue,
+          amount: item.amountValue * 1,
         };
         obj["division"].push(division);
       });
@@ -124,7 +134,7 @@ class ShowGroup extends Component {
           let division = {
             lender: this.state.user._id,
             borrower: item._id,
-            amount: item.amountValue,
+            amount: item.amountValue * 1,
           };
           obj["division"].push(division);
         }
@@ -212,6 +222,8 @@ class ShowGroup extends Component {
         if (debt_str === "") {
           debt_str = "No debts to show.";
         }
+        const filteredMember = this.state.allMembers.filter((val) => !this.props.groupSingle.data.members.includes(val._id) && 
+        val._id !== this.props.groupSingle.data.admin)
         this.setState({
           ...this.state,
           isAPICalled: false,
@@ -221,11 +233,10 @@ class ShowGroup extends Component {
           monthlyHeaders: newMHeaders,
           monthlyAmount: newMAmount,
           debt_str1: debt_str,
-          tempMembers: this.state.allMembers.filter(
-            (val) =>
-              this.props.groupSingle.data.members.includes(val._id) ||
-              val._id === this.props.groupSingle.data.admin
-          ),
+          tempMembers: this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id) || 
+          val._id === this.props.groupSingle.data.admin),
+          filteredMember: filteredMember,
+          unAddedMembers: filteredMember,
         });
       })
       .catch(() => {
@@ -367,10 +378,176 @@ class ShowGroup extends Component {
     console.log(e.target);
   };
 
+  onAddNewMember = (e) => {
+    e.preventDefault();
+    if(this.state.selectedAddMember.length < 0) {
+      alert("Please fill in all the details!");
+    } else {
+      const obj = {};
+      let membersId = [];
+      this.state.selectedAddMember.map((item) => membersId.push(item._id));
+      obj["members"] = membersId;
+      const { dispatch } = this.props;
+      dispatch(addNewMember(this.state.id, obj))
+      .then(window.location.reload())
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  };
+
+  handleAddNewMemberClose = (e) => {
+    this.setState({ 
+      amshow: false,
+      filteredMember: this.state.unAddedMembers,
+      selectedAddMember: [],
+      searchAddMember: "",
+    })
+  }
+
+  onUserRemoved = (val) => {
+    const removed = this.state.selectedAddMember.filter((item) => item._id === val._id);
+    const afterRemove = this.state.selectedAddMember.filter((item) => item._id !== val._id);
+    this.setState({
+      selectedAddMember: afterRemove,
+      filteredMember: [...this.state.filteredMember, removed[0]]
+    });
+  }
+
+  onSearchAddChange = (event) => {
+    let searchAddMember = event.target.value;
+    if (this.state.unAddedMembers.length < 0) {
+      return;
+    }
+    if (searchAddMember.length <= 0) {
+      let temp = this.state.unAddedMembers.filter((item) => !this.state.selectedAddMember.includes(item));
+      this.setState({
+        filteredMember: temp,
+        searchAddMember: event.target.value,
+      });
+    } else {
+      let temp = this.state.unAddedMembers.filter((item) =>
+        item.displayName
+          .toLowerCase()
+          .includes(searchAddMember.toLocaleLowerCase())
+      );
+      temp = temp.filter((item) => !this.state.selectedAddMember.includes(item));
+      this.setState({
+        filteredMember: temp,
+        searchAddMember: event.target.value,
+      });
+    }
+  }
+
+  onAddMemberUserSelected = (id) => {
+    this.setState({
+      searchAddMember: "",
+    });
+    const currSelected = this.state.filteredMember.filter((item) => item._id === id);
+    const isNotPresent = !this.state.selectedAddMember.includes(currSelected[0]);
+    const selectedAddMember = [...this.state.selectedAddMember, currSelected[0]]
+    const newFiltered = this.state.unAddedMembers.filter(
+      (item) => !selectedAddMember.includes(item)
+    );
+    if (isNotPresent) {
+      this.setState({
+        filteredMember: newFiltered,
+        selectedAddMember: selectedAddMember
+      });
+    }
+  }
+
   render() {
     if (this.state.isAPISuccess && this.state.groupSingle.data != null) {
       return (
         <>
+          <>
+            <Modal
+              show={this.state.amshow}
+              onHide={() => this.setState({ amshow: false })}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Add Members</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <InputGroup className="my-2 ms-2">
+                  <InputGroup.Text>Group Name:</InputGroup.Text>
+                  <FormControl
+                    placeholder="Group Name"
+                    aria-label="Group Name"
+                    aria-describedby="basic-addon1"
+                    value={this.state.groupSingle.data.name}
+                    disabled="true"
+                  />
+                </InputGroup>
+                <div className="dropdown">
+                  <Dropdown onSelect={this.onAddMemberUserSelected}>
+                    <Dropdown.Toggle variant="primary" id="dropdown-basic-button">
+                      Search Members
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu
+                      style={{
+                        backgroundColor: "#73a47",
+                        overflow: "auto",
+                        maxHeight: "15rem",
+                      }}
+                    >
+                      <InputGroup className="mt-0 mb-2 position-sticky top-0">
+                        <FormControl
+                          placeholder="Search contacts to add"
+                          aria-label="Search contacts to add"
+                          aria-describedby="basic-addon2"
+                          value={this.state.searchAddMember}
+                          onChange={this.onSearchAddChange}
+                        />
+                      </InputGroup>
+                      {this.state.filteredMember.map((val) => {
+                    return (
+                      <>
+                        <Dropdown.Item eventKey={val._id}>
+                          {val.displayName}
+                          <IoMdAdd className="float-end" color="darkblue" />
+                        </Dropdown.Item>
+                        <hr />
+                      </>
+                    );
+                  })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                {this.state.selectedAddMember.length >= 1 && (
+              <div className="selected-members pt-4">
+                {this.state.selectedAddMember.map((val, index) => {
+                  return (
+                    <>
+                      <Alert
+                        variant={"dark"}
+                        dismissible
+                        onClose={() => this.onUserRemoved(val)}
+                        key={index}
+                      >
+                        {val.displayName}
+                      </Alert>
+                    </>
+                  );
+                })}
+              </div>
+            )}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="danger"
+                  onClick={this.handleAddNewMemberClose}
+                >
+                  Close
+                </Button>
+                <Button variant="primary" onClick={this.onAddNewMember}>
+                  <span>Add</span>
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </>
           <>
             <Modal
               size="lg"
@@ -644,6 +821,31 @@ class ShowGroup extends Component {
                                 />{" "}
                               </Button>
                             </OverlayTrigger>
+                            {this.state.user._id ===
+                          this.state.groupSingle.data.admin ? (
+                            <OverlayTrigger
+                              placement="bottom"
+                              overlay={
+                                <Tooltip id="button-tooltip-2">
+                                  Add Member
+                                </Tooltip>
+                              }
+                            >
+                              <Button
+                                variant="outline-light"
+                                className="float-end rounded-pill"
+                                onClick={() => this.setState({ amshow: true })}
+                              >
+                                <BsPersonPlus
+                                  fontSize="1.5em"
+                                  color="darkblue"
+                                  className="mb-1"
+                                />{" "}
+                              </Button>
+                            </OverlayTrigger>
+                          ) : (
+                            <div></div>
+                          )}
                           </Col>
                         </Row>
                       </Container>

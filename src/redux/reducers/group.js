@@ -16,6 +16,8 @@ import {
   CLEAR_DEBTS_SUCCESS,
   DELETE_EXPENSE_SUCCESS,
   DELETE_EXPENSE_FAILURE,
+  ADD_MEMBER_SUCCESS,
+  ADD_MEMBER_FAILURE,
 } from "../actions/types";
 
 const groups = JSON.parse(localStorage.getItem("groups"));
@@ -95,6 +97,14 @@ export default function (state = initialState, action) {
         ...state,
       };
     case DELETE_EXPENSE_FAILURE:
+      return {
+        ...state,
+      };
+    case ADD_MEMBER_SUCCESS:
+      return {
+        ...state,
+      };
+    case ADD_MEMBER_FAILURE:
       return {
         ...state,
       };
