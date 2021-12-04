@@ -132,6 +132,7 @@ class ShowGroup extends Component {
       });
     }
     obj["amount"] = this.state.totalAmount * 1;
+    obj["is_payment"] = false;
     const { dispatch } = this.props;
     dispatch(addExpense(this.state.id, obj))
       .then(() => {
@@ -340,6 +341,10 @@ class ShowGroup extends Component {
       });
   };
 
+  handleBillUpload = (e) => {
+    console.log(e.target.files[0]);
+  }
+
   render() {
     return (
       <>
@@ -383,7 +388,7 @@ class ShowGroup extends Component {
                 </Form.Group>
                 <Form.Group controlId="formFileMultiple" className="mb-3">
                   <Form.Label>Upload Bill(Optional)</Form.Label>
-                  <Form.Control type="file" multiple />
+                  <Form.Control type="file" onChange={this.handleBillUpload}/>
                 </Form.Group>
                 <fieldset>
                   <Form.Group as={Row} className="mb-3">
