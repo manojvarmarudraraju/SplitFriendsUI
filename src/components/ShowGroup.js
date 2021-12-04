@@ -96,8 +96,6 @@ class ShowGroup extends Component {
       this.state.allMembers.map((item) => {
         total += item.amountValue * 1;
       });
-      console.log(total);
-      console.log(this.state.totalAmount);
       if (total !== this.state.totalAmount * 1) {
         alert("Please fill appropriate amount for distribution!");
         return;
@@ -206,8 +204,6 @@ class ShowGroup extends Component {
         if (debt_str === "") {
           debt_str = "No debts to show.";
         }
-        const tempMembers = this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id) || 
-        val._id === this.props.groupSingle.data.members)
         this.setState({
           ...this.state,
           isAPICalled: false,
@@ -217,7 +213,8 @@ class ShowGroup extends Component {
           monthlyHeaders: newMHeaders,
           monthlyAmount: newMAmount,
           debt_str1: debt_str,
-          tempMembers: tempMembers,
+          tempMembers: this.state.allMembers.filter((val) => this.props.groupSingle.data.members.includes(val._id) || 
+          val._id === this.props.groupSingle.data.admin),
         });
       })
       .catch(() => {
@@ -316,9 +313,8 @@ class ShowGroup extends Component {
     var obj = {};
     obj["groupName"] = gName;
     obj["expenseName"] = eName;
-    console.log(obj);
     dispatch(archiveExpense(gId, eId, obj))
-      .then(console.log(obj))
+      .then(window.location.reload())
       .catch((error) => {
         console.log(error);
       });
@@ -506,9 +502,6 @@ class ShowGroup extends Component {
                             .map((value, index) => (
                               <>
                                 <Dropdown.Item key={index} eventKey={value}>
-                                  {console.log("here")}
-                                  {console.log(this.state.groupSingle.debts.debts)}
-                                  {console.log(index)}
                                   {this.state.idUserMap[value]} ({Math.round((this.state.groupSingle.debts.debts[value] * 1 +Number.EPSILON)*100)/100}$){" "}
                                 </Dropdown.Item>
                                 <hr />
@@ -562,13 +555,13 @@ class ShowGroup extends Component {
                       <Container>
                         <Row>
                           <Col lg="9">
-                            {this.state.groupSingle.data.members.map((val) => (
+                            {this.state.tempMembers.map((val) => (
                               <Button
                                 variant="secondary"
                                 className="rounded-pill fs-6"
                                 size="sm"
                               >
-                                {this.state.idUserMap[val]}
+                                {val.displayName}
                               </Button>
                             ))}
                           </Col>
