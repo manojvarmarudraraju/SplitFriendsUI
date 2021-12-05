@@ -23,7 +23,8 @@ const GroupComponent = (props) => {
 
   var debt_str = "";
   Object.keys(data.debts.debts).forEach((val) => {
-    debt_str += idUserMap[val].toString() + ":" + data.debts.debts[val] + ", ";
+    debt_str +=
+      idUserMap[val].toString() + ": $" + data.debts.debts[val] + ", ";
   });
   debt_str = debt_str.slice(0, -2);
 
