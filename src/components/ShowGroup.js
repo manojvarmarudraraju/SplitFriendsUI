@@ -69,7 +69,7 @@ class ShowGroup extends Component {
       name: "",
       totalAmount: "",
       colr: "",
-      files: {},
+      files: "",
       clearDebtSelectedMember: "",
       clearDebtSelectedMemberAmount: "",
       isClearAllDebt: false,
@@ -147,6 +147,7 @@ class ShowGroup extends Component {
     }
     obj["amount"] = this.state.totalAmount * 1;
     obj["is_payment"] = false;
+    obj["image"] = this.state.files.name
     const { dispatch } = this.props;
     dispatch(addExpense(this.state.id, obj))
       .then(() => {
@@ -406,13 +407,11 @@ class ShowGroup extends Component {
   };
 
   handleBillUpload = (e) => {
-    const fd = new FormData();
+    const formData = new FormData(); 
+    formData.append('my-image-file', e.target.files[0], e.target.files[0].name);
     this.setState({
-      files: {
-        image: e.target.files[0],
-      },
+      files:  e.target.files[0],
     });
-    fd.append("image", e.target.files[0]);
   };
 
   onAddNewMember = (e) => {
@@ -645,7 +644,6 @@ class ShowGroup extends Component {
                       onChange={this.handleBillUpload}
                     />
                   </Form.Group>
-                  {console.log(this.state.files)}
                   <fieldset>
                     <Form.Group as={Row} className="mb-3">
                       <Form.Label>Split</Form.Label>
@@ -856,6 +854,7 @@ class ShowGroup extends Component {
                               <Button
                                 variant="primary"
                                 className="float-end rounded-pill"
+                                disabled={this.state.groupSingle.data.is_archived}
                                 onClick={() => this.setState({ lgShow: true })}
                               >
                                 <RiAddFill fontSize="1.5em" className="mb-1" />{" "}
@@ -901,6 +900,7 @@ class ShowGroup extends Component {
                                 <Button
                                   variant="outline-light"
                                   className="float-end rounded-pill"
+                                  disabled={this.state.groupSingle.data.is_archived}
                                   onClick={() =>
                                     this.setState({ amshow: true })
                                   }
@@ -950,7 +950,7 @@ class ShowGroup extends Component {
                                         <Button
                                           className="m-1 rounded"
                                           variant="danger"
-                                          disabled={val.is_deleted}
+                                          disabled={val.is_deleted || this.state.groupSingle.data.is_archived}
                                           onClick={() =>
                                             this.archiveExpense(
                                               this.state.groupSingle.data._id,
@@ -978,8 +978,8 @@ class ShowGroup extends Component {
                               <Row>
                                 <Col className="d-flex align-items-top">
                                   <Card.Img
-                                    src={Walmart}
-                                    alt="Walmart.png"
+                                    src={process.env.PUBLIC_URL + "/e23b43/images/" + (val.image ? val.image : "default.jpeg")}
+                                    alt="bill_invoice"
                                     className="w-25 h-100"
                                   />
                                 </Col>

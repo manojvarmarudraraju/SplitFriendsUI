@@ -58,7 +58,6 @@ const GroupComponent = (props) => {
                 <Link to={"/ShowGroup/" + data._id}>
                   <Button
                     variant="primary"
-                    disabled={data.is_archived}
                     className="rounded-pill border border-1 "
                   >
                     <FaEye fontSize="1.4em" />
