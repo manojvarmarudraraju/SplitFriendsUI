@@ -268,7 +268,7 @@ const Header = (props) => {
               </Nav.Link>
             </Nav>
             <Nav>
-              <Nav.Link id="navItem1">
+              <Nav.Link id="navItem1" className="text-uppercase">
                 <FaUserAlt style={{ marginBottom: "3px", padding: "0.5px" }} />{" "}
                 {user.displayName}
               </Nav.Link>
