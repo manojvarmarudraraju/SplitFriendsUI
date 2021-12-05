@@ -29,7 +29,7 @@ import Walmart from "../components/data/images/walmart.png";
 import { Bar, Pie } from "react-chartjs-2";
 import Chart from "chart.js/auto";
 import { clearMessage } from "../redux/actions/message";
-import { addNewMember, deleteExpense, getSingleGroups } from "../redux/actions/group";
+import { addNewMember, clearDebts, deleteExpense, getSingleGroups } from "../redux/actions/group";
 import { connect } from "react-redux";
 import { login } from "../redux/actions/auth";
 import { addExpense } from "../redux/actions/group";
@@ -266,7 +266,7 @@ class ShowGroup extends Component {
 
   handleDebtsClose = () => {
     this.setState({ cshow: false });
-    window.location.reload();
+    //window.location.reload();
   };
 
   handleDebtsSubmit = () => {
@@ -287,6 +287,25 @@ class ShowGroup extends Component {
       alert("Please enter valid amount to clear your debt.");
       return;
     }
+    const obj = {};
+    obj["name"] = "";
+    obj["division"] = [{
+      lender: this.state.user._id,
+      borrower: this.state.clearDebtSelectedMember,
+      amount: this.state.clearDebtSelectedMemberAmount * 1,
+    }];
+    obj["amount"] = this.state.clearDebtSelectedMemberAmount * 1;
+    obj["is_payment"] = true;
+    const {dispatch} = this.props;
+    const groupId = this.state.groupSingle.data._id;
+    dispatch(clearDebts(groupId, obj))
+      .then(() => {
+        this.handleDebtsClose();
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   handleNav = (e) => {
@@ -351,10 +370,11 @@ class ShowGroup extends Component {
   };
 
   onClearDebtMemberSelected = (e) => {
+    const temp = e.split(",")
     this.setState({
-      clearDebtSelectedMember: e,
+      clearDebtSelectedMember: temp[0],
       clearDebtSelectedMemberAmount: Math.abs(
-        this.state.groupSingle.debts.debts[e]
+        temp[1]*1
       ),
       isClearAllDebt: true,
     });
@@ -681,8 +701,10 @@ class ShowGroup extends Component {
               </Modal.Footer>
             </Modal>
           </>
+          {this.state.groupSingle.debts != null && this.state.groupSingle.debts.debts != null &&
+          Object.entries(this.state.groupSingle.debts.debts).filter((val) => val[1] < 0).length > 0 && (
           <>
-            <Modal
+              <Modal
               show={this.state.cshow}
               onHide={this.handleDebtsClose}
               backdrop="static"
@@ -709,14 +731,14 @@ class ShowGroup extends Component {
                       >
                         {Object.keys(this.state.groupSingle.debts.debts)
                           .length !== 0 &&
-                          Object.keys(this.state.groupSingle.debts.debts).map(
+                          Object.entries(this.state.groupSingle.debts.debts).filter((val) => val[1] < 0).map(
                             (value, index) => (
                               <>
                                 <Dropdown.Item key={index} eventKey={value}>
-                                  {this.state.idUserMap[value]} (
+                                  {this.state.idUserMap[value[0]]} (
                                   {Math.round(
-                                    (this.state.groupSingle.debts.debts[value] *
-                                      1 +
+                                    (Math.abs(value[1] *
+                                      1) +
                                       Number.EPSILON) *
                                       100
                                   ) / 100}
@@ -759,7 +781,7 @@ class ShowGroup extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
-          </>
+          </>)}
           <Header />
           <Container className="mt-1">
             <Row>
@@ -801,7 +823,8 @@ class ShowGroup extends Component {
                                 <RiAddFill fontSize="1.5em" className="mb-1" />{" "}
                               </Button>
                             </OverlayTrigger>
-
+                            {this.state.groupSingle.debts != null && this.state.groupSingle.debts.debts != null &&
+          Object.entries(this.state.groupSingle.debts.debts).filter((val) => val[1] < 0).length > 0 && (
                             <OverlayTrigger
                               placement="bottom"
                               overlay={
@@ -820,7 +843,7 @@ class ShowGroup extends Component {
                                   className="mb-1"
                                 />{" "}
                               </Button>
-                            </OverlayTrigger>
+                            </OverlayTrigger>)}
                             {this.state.user._id ===
                           this.state.groupSingle.data.admin ? (
                             <OverlayTrigger
@@ -923,9 +946,6 @@ class ShowGroup extends Component {
                                     </Card.Text>
                                     <Card.Text>
                                       Borrower: {this.handleBorrowerName(val)}
-                                    </Card.Text>
-                                    <Card.Text>
-                                      Original Amount: ${val.ori_amount}
                                     </Card.Text>
                                     <Card.Text>
                                       Total Amount: ${val.amount}

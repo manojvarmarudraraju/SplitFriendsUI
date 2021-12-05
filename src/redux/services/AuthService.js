@@ -89,7 +89,7 @@ const getSingleGroup = (groupId) => {
 
 const clearDebts = (groupId, obj) => {
   return axios
-    .post(GROUP_URL + groupId + "/settle", obj, { headers: AuthHeader() })
+    .put(GROUP_URL + "expense/" + groupId + "/", obj, { headers: AuthHeader() })
     .then((response) => {
       return response.data;
     });
