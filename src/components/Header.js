@@ -246,7 +246,7 @@ const Header = (props) => {
       <Navbar bg="dark" expand="lg" sticky="top">
         <Container fluid>
           <Navbar.Brand href="/home" id="navBrand">
-            Splitwith Friends
+          Split Among Friends
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
