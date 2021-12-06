@@ -238,7 +238,7 @@ const Header = (props) => {
                 />
               )}
               &nbsp;
-              <span>Save Changes</span>
+              <span>Add group</span>
             </Button>
           </Modal.Footer>
         </Modal>

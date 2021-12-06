@@ -108,7 +108,7 @@ class ShowGroup extends Component {
     }
     if (this.state.SplitName.formHorizontalRadios !== "equal") {
       let total = 0;
-      this.state.allMembers.map((item) => {
+      this.state.tempMembers.map((item) => {
         total += item.amountValue * 1;
       });
       if (total !== this.state.totalAmount * 1) {
@@ -134,7 +134,7 @@ class ShowGroup extends Component {
         obj["division"].push(division);
       });
     } else {
-      this.state.allMembers.map((item) => {
+      this.state.tempMembers.map((item) => {
         if (item.amountValue !== 0) {
           let division = {
             lender: this.state.user._id,
@@ -148,6 +148,7 @@ class ShowGroup extends Component {
     obj["amount"] = this.state.totalAmount * 1;
     obj["is_payment"] = false;
     obj["image"] = this.state.files.name
+    console.log(obj)
     const { dispatch } = this.props;
     dispatch(addExpense(this.state.id, obj))
       .then(() => {
@@ -162,14 +163,14 @@ class ShowGroup extends Component {
 
   handleChange = (e) => {
     const { name, value } = e.target;
-    this.state.allMembers.map((item) => {
+    this.state.tempMembers.map((item) => {
       item.amountValue = "";
     });
     this.setState({
       SplitName: {
         [name]: value,
       },
-      allMembers: this.state.allMembers,
+      tempMembers: this.state.tempMembers,
     });
   };
 
@@ -338,11 +339,11 @@ class ShowGroup extends Component {
       //   ? evt.target.value
       //   : this.state.amountValue;
       //this.setState({ amountValue: evt.target.value });
-      var array = [...this.state.allMembers];
+      var array = [...this.state.tempMembers];
       var index = array.indexOf(val);
       if (index !== -1) {
         array[index].amountValue = evt.target.value;
-        this.setState({ allMembers: array });
+        this.setState({ tempMembers: array });
       }
     }
   };
